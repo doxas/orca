@@ -1,6 +1,6 @@
 // ----------------------------------------------------------------------------
 // 
-// torna-do char.js
+// char.js
 // 
 // ----------------------------------------------------------------------------
 
@@ -100,63 +100,5 @@ Char.prototype.update = function(){
 	if(Math.abs(this.vpos.x) < 0.0005){this.vpos.x = 0;}
 	if(Math.abs(this.vpos.y) < 0.0005){this.vpos.y = 0;}
 	if(Math.abs(this.vpos.z) < 0.0005){this.vpos.z = 0;}
-
-	if(kArrowUp.press)   {this.vpos.y += 0.004;}
-	if(kArrowRight.press){this.vpos.x += 0.004;}
-	if(kArrowDown.press) {this.vpos.y -= 0.004;}
-	if(kArrowLeft.press) {this.vpos.x -= 0.004;}
-	if(this.vpos.x < -0.04){this.vpos.x = -0.04;}
-	if(this.vpos.y < -0.04){this.vpos.y = -0.04;}
-	if(this.vpos.x >  0.04){this.vpos.x =  0.04;}
-	if(this.vpos.y >  0.04){this.vpos.y =  0.04;}
-
-	this.position.x += this.vpos.x;
-	this.position.y += this.vpos.y;
-	this.position.z += this.vpos.z;
-	if(this.position.x < -3.5){this.position.x = -3.5;}
-	if(this.position.y < -3.5){this.position.y = -3.5;}
-	if(this.position.x >  3.5){this.position.x =  3.5;}
-	if(this.position.y >  3.5){this.position.y =  3.5;}
-};
-
-// shot
-function Shot(){
-	this.position = new Vec();
-	this.vpos = new Vec();
-	this.wpos = new Vec();
-	this.vector = new Vec();
-	this.alive = false;
-	this.speed = 0;
-	this.param = 0;
-}
-
-Shot.prototype.init = function(x, y, vx, vy, speed){
-	this.alive = true;
-	this.speed = speed;
-	this.param = 0;
-	this.position.x = x;  this.position.y = y;
-	this.vpos.x     = x;  this.vpos.y     = y;
-	this.wpos.x     = x;  this.wpos.y     = y;
-	this.vector.x   = vx; this.vector.y   = vy;
-};
-
-Shot.prototype.update = function(){
-	var i;
-	if(this.alive){
-		var x = this.vector.x * this.speed;
-		var y = this.vector.y * this.speed;
-		this.vpos.x = this.position.x + x * 0.55;
-		this.vpos.y = this.position.y + y * 0.55;
-		this.wpos.x = this.position.x + x * 0.05;
-		this.wpos.y = this.position.y + y * 0.05;
-		this.position.x += x;
-		this.position.y += y;
-		if(
-			this.position.x < -1.1 ||
-			this.position.x >  1.1 ||
-			this.position.y < -1.1 ||
-			this.position.y >  1.1
-		){this.alive = false;}
-	}
 };
 

@@ -25,16 +25,6 @@ var pi  = Math.PI;
 var torna;
 
 // events
-// var kSpace      = new keys();
-// var kEnter      = new keys();
-// var kZkey       = new keys();
-// var kXkey       = new keys();
-// var kCkey       = new keys();
-var kArrowUp    = new keys();
-var kArrowRight = new keys();
-var kArrowDown  = new keys();
-var kArrowLeft  = new keys();
-var deviceOrientUpdate = false;
 
 // audio
 var audioCtr = new AudioCtr(0.5, 0.5);
@@ -57,15 +47,8 @@ window.onload = function(){
 	bufferSize = offScreenSize;
 	
 	window.addEventListener('keydown', keyDown, true);
-	window.addEventListener('keyup', keyUp, true);
-	window.addEventListener("deviceorientation", deviceOrientation);
 	
 	// audioCtr.load('http://game.wgld.org/raychintv/snd/background.mp3', 0, true, true);
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/bomb.mp3', 1, false, false);
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/hit.mp3', 2, false, false);
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/powerhit.mp3', 3, false, false);
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/shot.mp3', 4, false, false);
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/damage.mp3', 5, false, false);
 	
 	var e = document.getElementById('info');
 	e.innerText = 'loading...';
@@ -79,7 +62,7 @@ function main(){
 	var ease20 = new Array();
 	var ease30 = new Array();
 	
-	// shader program initialize phase ----------------------------------------
+	// line base shader program -----------------------------------------------
 	var basePrg = w.generate_program(
 		'baseVS',
 		'baseFS',
@@ -89,6 +72,7 @@ function main(){
 		['matrix4fv', '4fv']
 	);
 	
+	// board rect program -----------------------------------------------------
 	var boardPrg = w.generate_program(
 		'boardVS',
 		'boardFS',
@@ -106,6 +90,16 @@ function main(){
 		[3],
 		['map', 'mapSize', 'resolution'],
 		['1i', '1f', '2fv']
+	);
+	
+	// edge programs ----------------------------------------------------------
+	var edgePrg = w.generate_program(
+		'edgeVS',
+		'edgeFS',
+		['position', 'texCoord'],
+		[3, 2],
+		['mvpMatrix', 'texture', 'kernel', 'resolution'],
+		['matrix4fv', '1i', '1fv', '1f']
 	);
 	
 	// blur programs ----------------------------------------------------------
@@ -209,10 +203,11 @@ function main(){
 	//w.create_texture('img/chip.png', 0);
 	
 	// frame buffer  initialize phase -----------------------------------------
-	noiseBuffer = w.create_framebuffer(bufferSize, bufferSize);
+	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
 	offScreenBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
-	hBlurBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
-	vBlurBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
+	hBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
+	vBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
+	edgeBuffer      = w.create_framebuffer(offScreenSize, offScreenSize);
 	
 	// noise data initialize --------------------------------------------------
 	w.gl.bindFramebuffer(w.gl.FRAMEBUFFER, noiseBuffer.f);
@@ -254,6 +249,13 @@ function main(){
 		weight[i] /= t;
 	}
 	
+	// kernel
+	var kernel = [
+		1.0,  1.0,  1.0,
+		1.0, -8.0,  1.0,
+		1.0,  1.0,  1.0
+	];
+	
 	// char
 	torna = new Char();
 	torna.init();
@@ -286,25 +288,32 @@ function main(){
 		
 		// initialize
 		count++;
-		deviceOrientUpdate = false;
 		gl.clear(gl.COLOR_BUFFER_BIT);
-		
-		// update keys ````````````````````````````````````````````````````````
-		keyUpdate();
 		
 		// off screen
 		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
 		
-		
 		// char fase
 		torna.update();
 		basePrg.set_program();
 		charRender();
 		
-		// horizon blur
+		// edge
 		gl.bindTexture(gl.TEXTURE_2D, offScreenBuffer.t);
+		gl.bindFramebuffer(gl.FRAMEBUFFER, edgeBuffer.f);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.viewport(0, 0, offScreenSize, offScreenSize);
+		
+		edgePrg.set_program();
+		edgePrg.set_attribute(blurVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, blurIBO);
+		edgePrg.push_shader([ortMatrix, 0, kernel, offScreenSize]);
+		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
+		
+		// horizon blur
+		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, hBlurBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
@@ -390,97 +399,9 @@ function keyDown(e){
 	var ck = e.keyCode;
 	if(ck === 27){
 		run = false;
-		audioCtr.src[0].end(0);
-	}                                       // escape
-//	if(ck === 13){kEnter.update(1);}        // enter
-//	if(ck === 32){kSpace.update(1);}        // space
-	if(ck === 37){kArrowLeft.update(1);}    // left
-	if(ck === 38){kArrowUp.update(1);}      // up
-	if(ck === 39){kArrowRight.update(1);}   // right
-	if(ck === 40){kArrowDown.update(1);}    // down
-	// if(ck === 90){kZkey.update(1);}         // z
-//	if(ck === 88){kXkey.update(1);}         // x
-//	if(ck === 67){kCkey.update(1);}         // c
-}
-
-function keyUp(e){
-	var ck = e.keyCode;
-//	if(ck === 27){run = false;}             // escape
-//	if(ck === 13){kEnter.update(2);}        // enter
-//	if(ck === 32){kSpace.update(2);}        // space
-	if(ck === 37){kArrowLeft.update(2);}    // left
-	if(ck === 38){kArrowUp.update(2);}      // up
-	if(ck === 39){kArrowRight.update(2);}   // right
-	if(ck === 40){kArrowDown.update(2);}    // down
-	// if(ck === 90){kZkey.update(2);}         // z
-//	if(ck === 88){kXkey.update(2);}         // x
-//	if(ck === 67){kCkey.update(2);}         // c
-}
-
-function keyUpdate(){
-//	kEnter.update(0);
-//	kSpace.update(0);
-	kArrowLeft.update(0);
-	kArrowUp.update(0);
-	kArrowRight.update(0);
-	kArrowDown.update(0);
-	// kZkey.update(0);
-//	kXkey.update(0);
-//	kCkey.update(0);
-}
-
-function keys(){
-	this.down  = false;
-	this.press = false;
-	this.up    = false;
-	this.count = 0;
-	this.update = function(flg){
-		if(flg == 0){
-			if(this.down){this.down = false;}
-			if(this.up){this.up = false;}
-			if(this.press){this.count++;}
-		}else if(flg == 1){
-			this.down = true;
-			this.up = false;
-			this.press = true;
-		}else if(flg == 2){
-			this.down = false;
-			this.up = true;
-			this.press = false;
-			this.count = 0;
-		}
-	};
-}
-
-// mobile events
-function deviceOrientation(eve){
-	if(deviceOrientUpdate){return;}
-	deviceOrientUpdate = true;
-	if(torna != null){
-		var x = eve.beta;
-		var y = eve.gamma;
-		var vx = 0, vy = 0;
-		switch(true){
-			case x > 5:
-				vx = Math.min(x, 10.0);
-				break;
-			case x < 5:
-				vx = Math.max(x, -10.0);
-				break;
-		}
-		switch(true){
-			case y > 5:
-				vy = Math.min(y, 10.0);
-				break;
-			case y < 5:
-				vy = Math.max(y, -10.0);
-				break;
-		}
-		torna.vpos.y += 0.004 * -(vx / 20);
-		torna.vpos.x += 0.004 * (vy / 20);
+		// audioCtr.src[0].end(0);
 	}
 }
-
 
 function easing(t){
 	return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
