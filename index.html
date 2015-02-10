@@ -7,16 +7,16 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<meta name="description" content="torna-do">
 		<meta name="keywords" content="torna-do">
-		
+
 		<link rel="stylesheet" href="css/style.css" type="text/css">
 		<script type="text/javascript" src="js/minMatrixb.js"></script>
 		<script type="text/javascript" src="js/wgld.js"></script>
 		<script type="text/javascript" src="js/char.js"></script>
 		<script type="text/javascript" src="js/audio.js"></script>
 		<script type="text/javascript" src="js/script.js"></script>
-		
+
 		<title>orca</title>
-		
+
 		<!-- matrix transformation shader ===================================================== -->
 		<script id="baseVS" type="x-shader/x-vertex">
 attribute vec3 position;
@@ -36,7 +36,7 @@ void main(void){
 	gl_FragColor = ambient;
 }
 		</script>
-		
+
 		<!-- board shader ===================================================================== -->
 		<script id="boardVS" type="x-shader/x-vertex">
 attribute float index;
@@ -65,7 +65,7 @@ void main(void){
 	}else{
 		dest = bgcolor;
 	}
-	
+
 	gl_FragColor = dest;
 }
 		</script>
@@ -92,7 +92,7 @@ void main(){
 	float tFrag = 1.0 / resolution;
 	vec2  fc;
 	vec3  destColor = vec3(0.0);
-	
+
 	if(horizon){
 		fc = vec2(gl_FragCoord.s, resolution - gl_FragCoord.t);
 		destColor += texture2D(texture, (fc + vec2(-4.0, 0.0)) * tFrag).rgb * weight[4];
@@ -116,7 +116,7 @@ void main(){
 		destColor += texture2D(texture, (fc + vec2(0.0,  3.0)) * tFrag).rgb * weight[3];
 		destColor += texture2D(texture, (fc + vec2(0.0,  4.0)) * tFrag).rgb * weight[4];
 	}
-	
+
 	gl_FragColor = vec4(destColor, 1.0);
 }
 		</script>
@@ -159,7 +159,7 @@ void main(){
 	float tFrag = 1.0 / resolution;
 	vec2  fc = vec2(gl_FragCoord.s, gl_FragCoord.t);
 	vec3  destColor = vec3(0.0);
-	
+
 	for(int i = 0; i < 9; i++){
 		destColor += texture2D(texture, (fc + offset[i]) * tFrag).rgb * kernel[i];
 	}
@@ -232,11 +232,86 @@ void main(void){
 	vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / max(resolution.x, resolution.y);
 	vec2 t = mod(gl_FragCoord.xy, mapSize);
 	float n = snoise(t, t / mapSize, vec2(mapSize));
-	
+
 	gl_FragColor = vec4(vec3(n), 1.0);
 }
 		</script>
-		
+
+		<script id="colorVS" type="x-shader/x-vertex">
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec4 color;
+attribute vec2 texCoord;
+uniform   mat4 mvpMatrix;
+varying   vec3 vPosition;
+varying   vec3 vNormal;
+varying   vec4 vColor;
+varying   vec2 vTexCoord;
+
+void main(){
+	vPosition   = mMatrix * vec4(position, 1.0);
+	vNormal     = normal;
+	vColor      = color;
+	vTexCoord   = texCoord;
+	gl_Position = mvpMatrix * vec4(position, 1.0);
+}
+		</script>
+		<script id="colorFS" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform mat4 invMatrix;
+uniform vec3 lightPosition;
+uniform vec3 eyePosition;
+uniform vec3 centerPoint;
+uniform vec4 ambient;
+uniform int  mode;
+// mode -----------------------------------------------------------------------
+// 0: vertex Color + lighting
+// 1: vertex Color + lighting + texture
+// 2: vertex color + texture
+// 3: vertex color only
+uniform bool tex;
+varying vec3 vPosition;
+varying vec3 vNormal;
+varying vec4 vColor;
+varying vec2 vTexCoord;
+
+void main(){
+	vec3 inverseLight = vec3(0.0);
+	vec3 eyeDirection = vec3(0.0);
+	vec3 inverseEye   = vec3(0.0);
+	vec3 halfLightEye = vec3(0.0);
+	float diff = 0.0;
+	float spec = 0.0;
+	vec4 destColor = vec4(0.0);
+	vec4 smpColor  = vec4(0.0);
+
+	if(mode < 2){
+		inverseLight = normalize(invMatrix * vec4(lightPosition, 1.0)).xyz;
+		eyeDirection = eyePosition - centerPoint;
+		inverseEye   = normalize(invMatrix * vec4(eyeDirection, 1.0)).xyz;
+		halfLightEye = normalize(inverseLight + inverseEye);
+		diff =     clamp(dot(inverseLight, vNormal), 0.2, 1.0);
+		spec = pow(clamp(dot(halfLightEye, vNormal), 0.0, 1.0), 20.0);
+		if(mode == 0){
+			destColor = vec4(vColor.rgb * diff + vec3(spec) + ambient.rgb, vColor.a * ambient.a);
+		}else{
+			smpColor  = texture2D(texture, vTexCoord.st);
+			destColor = vec4(vColor.rgb * diff + vec3(spec) + ambient.rgb, vColor.a * ambient.a) * smpColor;
+		}
+	}else{
+		if(mode == 2){
+			smpColor  = texture2D(texture, vTexCoord.st);
+			destColor = vColor * smpColor;
+		}else{
+			destColor = vColor;
+		}
+	}
+
+	gl_FragColor = destColor;
+}
+		</script>
+
 	</head>
 	<body>
 		<canvas id="canvas"></canvas>

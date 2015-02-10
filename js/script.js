@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------------------
-// 
+//
 // orca
-// 
+//
 // ----------------------------------------------------------------------------
 
 // global
@@ -45,14 +45,14 @@ window.onload = function(){
 	}while(Math.pow(2, i + 1) < screenSize);
 	offScreenSize = Math.min(512, offScreenSize);
 	bufferSize = offScreenSize;
-	
+
 	window.addEventListener('keydown', keyDown, true);
-	
+
 	// audioCtr.load('http://game.wgld.org/raychintv/snd/background.mp3', 0, true, true);
-	
+
 	var e = document.getElementById('info');
 	e.innerText = 'loading...';
-	
+
 	main();
 };
 
@@ -61,7 +61,7 @@ function main(){
 	var ease10 = new Array();
 	var ease20 = new Array();
 	var ease30 = new Array();
-	
+
 	// line base shader program -----------------------------------------------
 	var basePrg = w.generate_program(
 		'baseVS',
@@ -71,7 +71,7 @@ function main(){
 		['mvpMatrix', 'ambient'],
 		['matrix4fv', '4fv']
 	);
-	
+
 	// board rect program -----------------------------------------------------
 	var boardPrg = w.generate_program(
 		'boardVS',
@@ -81,7 +81,7 @@ function main(){
 		['position', 'texCoord', 'texture', 'tex', 'bgcolor'],
 		['3fv', '2fv', '1i', '1i', '4fv']
 	);
-	
+
 	// noise programs ---------------------------------------------------------
 	var noisePrg = w.generate_program(
 		'noiseVS',
@@ -91,7 +91,7 @@ function main(){
 		['map', 'mapSize', 'resolution'],
 		['1i', '1f', '2fv']
 	);
-	
+
 	// edge programs ----------------------------------------------------------
 	var edgePrg = w.generate_program(
 		'edgeVS',
@@ -101,7 +101,7 @@ function main(){
 		['mvpMatrix', 'texture', 'kernel', 'resolution'],
 		['matrix4fv', '1i', '1fv', '1f']
 	);
-	
+
 	// blur programs ----------------------------------------------------------
 	var blurPrg = w.generate_program(
 		'blurVS',
@@ -111,7 +111,17 @@ function main(){
 		['mvpMatrix', 'texture', 'weight', 'resolution', 'horizon'],
 		['matrix4fv', '1i', '1fv', '1f', '1i']
 	);
-	
+
+	// color programs ---------------------------------------------------------
+	var colorPrg = w.generate_program(
+		'colorVS',
+		'colorFS',
+		['position', 'normal', 'color', 'texCoord'],
+		[3, 3, 4, 2],
+		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture'],
+		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i']
+	);
+
 	// board
 	var bIndex = [0, 1, 2, 3];
 	var board = w.create_vbo(bIndex);
@@ -122,10 +132,10 @@ function main(){
 	var idx = [0, 2, 1, 1, 2, 3];
 	var boardIndex = w.create_ibo(idx);
 	var boardIndexLength = idx.length;
-	
+
 	// board const
 	var B_FULL = 0;
-	
+
 	// board - full
 	boardPosition[B_FULL] = [
 		-1.0,  1.0,  0.0,
@@ -140,7 +150,7 @@ function main(){
 		1.0, 1.0,
 		1.0, 0.0
 	];
-	
+
 	// ortho
 	var pos = [
 	   -1.0,  1.0,  0.0,
@@ -154,31 +164,38 @@ function main(){
 		0.0, 1.0,
 		1.0, 1.0
 	];
-	
+
 	var blurVBOList = [w.create_vbo(pos), w.create_vbo(tex)];
 	var blurIBO = w.create_ibo(idx);
 	var blurIndexLength = idx.length;
-	
+
+	var testData = sphere(16, 16, 2.5);
+	var tempData = sphere(32, 32, 3.0);
+	mergeIndex(testData, tempData);
+	var testPosition    = w.create_vbo(testData.position);
+	var testVBOList     = [testPosition];
+	var testIndexLength = testData.position.length / 3;
+
 	// box lines
 	// var boxData = box(2.0);
 	var boxData = ball(3, 3, 2.0);
 	var boxPosition    = w.create_vbo(boxData.position);
 	var boxVBOList     = [boxPosition];
 	var boxIndexLength = boxData.position.length / 3;
-	
+
 	// ball lines
 	var ballData = ball(6, 6, 1.5);
 	var ballPosition    = w.create_vbo(ballData.position);
 	var ballVBOList     = [ballPosition];
 	var ballIndexLength = ballData.position.length / 3;
-	
+
 	// noise
 	var noiseData = plane(1.0);
 	var noisePosition    = w.create_vbo(noiseData.position);
 	var noiseVBOList     = [noisePosition];
 	var noiseIndex       = w.create_ibo(noiseData.index);
 	var noiseIndexLength = noiseData.index.length;
-	
+
 	// matrix and other data initialize phase ---------------------------------
 	var mMatrix   = mat.identity(mat.create());
 	var vMatrix   = mat.identity(mat.create());
@@ -186,29 +203,29 @@ function main(){
 	var tmpMatrix = mat.identity(mat.create());
 	var mvpMatrix = mat.identity(mat.create());
 	var ortMatrix = mat.identity(mat.create());
-	
+
 	// ortho
 	mat.lookAt([0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
 	mat.ortho(-1.0, 1.0, 1.0, -1.0, 0.1, 1.0, pMatrix);
 	mat.multiply(pMatrix, vMatrix, ortMatrix);
-	
+
 	// camera and scene
 	var camPosition = [0.0, 0.0, 10.0];
 	var camUp       = [0.0, 1.0, 0.0];
 	mat.lookAt(camPosition, [0.0, 0.0, 0.0], camUp, vMatrix);
 	mat.perspective(45, 1.0, 0.1, 15.0, pMatrix);
 	mat.multiply(pMatrix, vMatrix, tmpMatrix);
-	
+
 	// texture initialize phase -----------------------------------------------
 	//w.create_texture('img/chip.png', 0);
-	
+
 	// frame buffer  initialize phase -----------------------------------------
 	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
 	offScreenBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
 	hBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
 	vBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
 	edgeBuffer      = w.create_framebuffer(offScreenSize, offScreenSize);
-	
+
 	// noise data initialize --------------------------------------------------
 	w.gl.bindFramebuffer(w.gl.FRAMEBUFFER, noiseBuffer.f);
 	w.gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -220,7 +237,7 @@ function main(){
 	noisePrg.push_shader([true, bufferSize, [bufferSize, bufferSize]]);
 	w.gl.drawElements(w.gl.TRIANGLES, noiseIndexLength, w.gl.UNSIGNED_SHORT, 0);
 	w.gl.flush();
-	
+
 	// initialize setting phase -----------------------------------------------
 	w.gl.bindFramebuffer(w.gl.FRAMEBUFFER, null);
 	w.gl.enable(w.gl.BLEND);
@@ -228,12 +245,12 @@ function main(){
 	w.gl.blendEquationSeparate(w.gl.FUNC_ADD, w.gl.FUNC_ADD);
 	w.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	w.gl.clearDepth(1.0);
-	
+
 	for(i = 0; i <= 5;  i++){ease5[i]  = easeOutCubic(i * 0.2);}
 	for(i = 0; i <= 10; i++){ease10[i] = easeOutCubic(i * 0.1);}
 	for(i = 0; i <= 20; i++){ease20[i] = easeOutCubic(i * (1 / 20));}
 	for(i = 0; i <= 30; i++){ease30[i] = easeOutCubic(i * (1 / 30));}
-	
+
 	// gaussian weight
 	var weight = new Array(5);
 	var t = 0.0;
@@ -248,31 +265,31 @@ function main(){
 	for(i = 0; i < weight.length; i++){
 		weight[i] /= t;
 	}
-	
+
 	// kernel
 	var kernel = [
 		1.0,  1.0,  1.0,
 		1.0, -8.0,  1.0,
 		1.0,  1.0,  1.0
 	];
-	
+
 	// char
 	torna = new Char();
 	torna.init();
-	
+
 	// render -----------------------------------------------------------------
 	w.gl.activeTexture(w.gl.TEXTURE0);
 	w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
-	
+
 	// loading wait -----------------------------------------------------------
 	(function(){
 		// if(audioCtr.loadComplete() && w.texture[0] != null){
 		// 	// background music play
 		// 	audioCtr.src[0].play();
-		//	
+		//
 		// 	// dom update
 		// 	document.getElementById('info').innerText = 'done';
-		//	
+		//
 		// 	// renderer
 		// 	render();
 		// }else{
@@ -280,59 +297,59 @@ function main(){
 		// }
 		render();
 	})();
-	
+
 	// render function --------------------------------------------------------
 	function render(){
 		var i;
 		var gl = w.gl;
-		
+
 		// initialize
 		count++;
 		gl.clear(gl.COLOR_BUFFER_BIT);
-		
+
 		// off screen
 		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
-		
+
 		// char fase
 		torna.update();
 		basePrg.set_program();
 		charRender();
-		
+
 		// edge
 		gl.bindTexture(gl.TEXTURE_2D, offScreenBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, edgeBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
-		
+
 		edgePrg.set_program();
 		edgePrg.set_attribute(blurVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, blurIBO);
 		edgePrg.push_shader([ortMatrix, 0, kernel, offScreenSize]);
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
-		
+
 		// horizon blur
 		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, hBlurBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
-		
+
 		blurPrg.set_program();
 		blurPrg.set_attribute(blurVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, blurIBO);
 		blurPrg.push_shader([ortMatrix, 0, weight, offScreenSize, true]);
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
-		
+
 		// vertical blur
 		gl.bindTexture(gl.TEXTURE_2D, hBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, vBlurBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
-		
+
 		blurPrg.push_shader([ortMatrix, 0, weight, offScreenSize, false]);
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
-		
+
 		// board
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
@@ -343,16 +360,16 @@ function main(){
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
 		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.25, 1.25, 1.25, 1.0]]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
-		
-		
+
+
 		basePrg.set_program();
 		charRender();
-		
-		
+
+
 		// finish
 		gl.flush();
 		if(run){requestAnimationFrame(render);}
-		
+
 		// char render
 		function charRender(){
 			// box
@@ -364,7 +381,7 @@ function main(){
 			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 			basePrg.push_shader([mvpMatrix, [1.0, 1.0, 1.0, 1.0]]);
 			gl.drawArrays(gl.LINE_STRIP, 0, boxIndexLength);
-			
+
 			// ball
 			basePrg.set_attribute(ballVBOList);
 			mat.identity(mMatrix);
@@ -379,6 +396,18 @@ function main(){
 }
 
 // event and utility function =================================================
+function mergeIndex(baseArr, concatArr){
+	var i, j;
+	var firstIndex = baseArr.position.length / 3;
+	for(i = 0, j = concatArr.index.length; i < j; i++){
+		baseArr.index.push(concatArr.index[i] + firstIndex);
+	}
+	baseArr.position = baseArr.position.concat(concatArr.position);
+	baseArr.normal   = baseArr.normal.concat(concatArr.normal);
+	baseArr.color    = baseArr.color.concat(concatArr.color);
+	baseArr.texCoord = baseArr.texCoord.concat(concatArr.texCoord);
+}
+
 function returnCoordArray(num, round){
 	var i, j, k, l;
 	var s = ('0000' + num).slice(-round);
