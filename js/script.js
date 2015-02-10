@@ -173,8 +173,12 @@ function main(){
 	var tempData = sphere(32, 32, 3.0);
 	mergeIndex(testData, tempData);
 	var testPosition    = w.create_vbo(testData.position);
-	var testVBOList     = [testPosition];
-	var testIndexLength = testData.position.length / 3;
+	var testNormal      = w.create_vbo(testData.normal);
+	var testColor       = w.create_vbo(testData.color);
+	var testTexCoord    = w.create_vbo(testData.texCoord);
+	var testVBOList     = [testPosition, testNormal, testColor, testTexCoord];
+	var testIndex       = w.create_ibo(testData.index);
+	var testIndexLength = testData.index.length;
 
 	// box lines
 	// var boxData = box(2.0);
@@ -202,6 +206,7 @@ function main(){
 	var pMatrix   = mat.identity(mat.create());
 	var tmpMatrix = mat.identity(mat.create());
 	var mvpMatrix = mat.identity(mat.create());
+	var invMatrix = mat.identity(mat.create());
 	var ortMatrix = mat.identity(mat.create());
 
 	// ortho
@@ -211,10 +216,13 @@ function main(){
 
 	// camera and scene
 	var camPosition = [0.0, 0.0, 10.0];
+	var camCenter   = [0.0, 0.0, 0.0];
 	var camUp       = [0.0, 1.0, 0.0];
-	mat.lookAt(camPosition, [0.0, 0.0, 0.0], camUp, vMatrix);
+	mat.lookAt(camPosition, camCenter, camUp, vMatrix);
 	mat.perspective(45, 1.0, 0.1, 15.0, pMatrix);
 	mat.multiply(pMatrix, vMatrix, tmpMatrix);
+
+	var lightPosition = [0.577, 0.577, 0.577];
 
 	// texture initialize phase -----------------------------------------------
 	//w.create_texture('img/chip.png', 0);
@@ -351,19 +359,45 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		// board
+		// gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
+		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+		// gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		// gl.viewport(0, 0, screenSize, screenSize);
+		// boardPrg.set_program();
+		// boardPrg.set_attribute(boardVBOList);
+		// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
+		// boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.25, 1.25, 1.25, 1.0]]);
+		// gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+
+
+		// test
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, screenSize, screenSize);
-		boardPrg.set_program();
-		boardPrg.set_attribute(boardVBOList);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.25, 1.25, 1.25, 1.0]]);
-		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+		colorPrg.set_program();
+		colorPrg.set_attribute(testVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, testIndex);
+		mat.identity(mMatrix);
+		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+		mat.inverse(mMatrix, invMatrix);
+		colorPrg.push_shader([
+			mMatrix,
+			mvpMatrix,
+			invMatrix,
+			lightPosition,
+			camPosition,
+			camCenter,
+			[0.0, 0.0, 0.0, 1.0],
+			0,
+			0
+		]);
+		gl.drawElements(gl.TRIANGLES, testIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
-		basePrg.set_program();
-		charRender();
+		// basePrg.set_program();
+		// charRender();
 
 
 		// finish

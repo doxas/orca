@@ -242,6 +242,7 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
+uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 varying   vec3 vPosition;
 varying   vec3 vNormal;
@@ -249,7 +250,7 @@ varying   vec4 vColor;
 varying   vec2 vTexCoord;
 
 void main(){
-	vPosition   = mMatrix * vec4(position, 1.0);
+	vPosition   = (mMatrix * vec4(position, 1.0)).xyz;
 	vNormal     = normal;
 	vColor      = color;
 	vTexCoord   = texCoord;
@@ -270,7 +271,7 @@ uniform int  mode;
 // 1: vertex Color + lighting + texture
 // 2: vertex color + texture
 // 3: vertex color only
-uniform bool tex;
+uniform sampler2D texture;
 varying vec3 vPosition;
 varying vec3 vNormal;
 varying vec4 vColor;
