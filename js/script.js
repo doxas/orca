@@ -48,7 +48,7 @@ window.onload = function(){
 
 	window.addEventListener('keydown', keyDown, true);
 
-	// audioCtr.load('http://game.wgld.org/raychintv/snd/background.mp3', 0, true, true);
+	audioCtr.load('snd/bgm2.mp3', 0, true, true);
 
 	var e = document.getElementById('info');
 	e.innerText = 'loading...';
@@ -225,7 +225,7 @@ function main(){
 	var lightPosition = [0.577, 0.577, 0.577];
 
 	// texture initialize phase -----------------------------------------------
-	//w.create_texture('img/chip.png', 0);
+	w.create_texture('img/chip.png', 0);
 
 	// frame buffer  initialize phase -----------------------------------------
 	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
@@ -291,19 +291,19 @@ function main(){
 
 	// loading wait -----------------------------------------------------------
 	(function(){
-		// if(audioCtr.loadComplete() && w.texture[0] != null){
-		// 	// background music play
-		// 	audioCtr.src[0].play();
-		//
-		// 	// dom update
-		// 	document.getElementById('info').innerText = 'done';
-		//
-		// 	// renderer
-		// 	render();
-		// }else{
-		// 	setTimeout(arguments.callee, 100);
-		// }
-		render();
+		if(audioCtr.loadComplete() && w.texture[0] != null){
+			// background music play
+			audioCtr.src[0].play();
+		
+			// dom update
+			document.getElementById('info').innerText = 'done';
+		
+			// renderer
+			render();
+		}else{
+			setTimeout(arguments.callee, 100);
+		}
+		// render();
 	})();
 
 	// render function --------------------------------------------------------
@@ -371,6 +371,7 @@ function main(){
 
 
 		// test
+		var scaleCoef = audioCtr.src[0].onData[16] / 255;
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
@@ -379,6 +380,7 @@ function main(){
 		colorPrg.set_attribute(testVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, testIndex);
 		mat.identity(mMatrix);
+		mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
 		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
 		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 		mat.inverse(mMatrix, invMatrix);
@@ -462,7 +464,7 @@ function keyDown(e){
 	var ck = e.keyCode;
 	if(ck === 27){
 		run = false;
-		// audioCtr.src[0].end(0);
+		audioCtr.src[0].end(0);
 	}
 }
 

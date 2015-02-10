@@ -23,7 +23,7 @@ function AudioCtr(bgmGainValue, soundGainValue){
 		this.soundGain = this.ctx.createGain();
 		this.soundGain.connect(this.comp);
 		this.soundGain.gain.value = soundGainValue;
-		this.src = new Array();
+		this.src = [];
 	}else{
 		return null;
 	}
@@ -62,13 +62,22 @@ function AudioSrc(ctx, gain, audioBuffer, loop){
 	this.ctx = ctx;
 	this.gain = gain;
 	this.audioBuffer = audioBuffer;
-	this.bufferSource = new Array();
+	this.bufferSource = [];
 	this.loop = loop;
 	this.loaded = false;
+	this.fftLoop = 64;
+	this.count = 0;
+
+	this.node = this.ctx.createScriptProcessor(2048, 1, 1);
+	this.analyser = this.ctx.createAnalyser();
+	this.analyser.smoothingTimeConstant = 0.8;
+	this.analyser.fftSize = this.fftLoop * 2;
+	this.onData = new Uint8Array(this.analyser.frequencyBinCount);
 }
 
 AudioSrc.prototype.play = function(){
 	var i, j, k;
+	var tmp = this;
 	i = this.bufferSource.length;
 	k = -1;
 	if(i > 0){
@@ -97,9 +106,22 @@ AudioSrc.prototype.play = function(){
 			this.playnow = false;
 		};
 	}
+
+	this.bufferSource[k].connect(this.analyser);
+	this.analyser.connect(this.node);
+	this.node.connect(this.ctx.destination);
+	this.node.onaudioprocess = function(eve){onprocessEvent(eve);};
+
 	this.bufferSource[k].connect(this.gain);
 	this.bufferSource[k].start(0);
 	this.bufferSource[k].playnow = true; // custom property
+
+	function onprocessEvent(eve){
+		if(tmp.count !== count){
+			tmp.count = count;
+			tmp.analyser.getByteFrequencyData(tmp.onData);
+		}
+	}
 };
 
 AudioSrc.prototype.end = function(index){
