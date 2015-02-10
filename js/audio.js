@@ -40,7 +40,7 @@ AudioCtr.prototype.load = function(url, index, loop, background){
 	
 	xml.onload = function(){
 		ctx.decodeAudioData(xml.response, function(buf){
-			src[index] = new AudioSrc(ctx, gain, buf, loop);
+			src[index] = new AudioSrc(ctx, gain, buf, loop, background);
 			src[index].loaded = true;
 			console.log('audio loaded : index ' + index + '; ')
 		}, function(e){console.log(e);});
@@ -58,7 +58,7 @@ AudioCtr.prototype.loadComplete = function(){
 };
 
 // audio source
-function AudioSrc(ctx, gain, audioBuffer, loop){
+function AudioSrc(ctx, gain, audioBuffer, loop, background){
 	this.ctx = ctx;
 	this.gain = gain;
 	this.audioBuffer = audioBuffer;
@@ -67,6 +67,7 @@ function AudioSrc(ctx, gain, audioBuffer, loop){
 	this.loaded = false;
 	this.fftLoop = 64;
 	this.count = 0;
+	this.background = background;
 
 	this.node = this.ctx.createScriptProcessor(2048, 1, 1);
 	this.analyser = this.ctx.createAnalyser();
@@ -107,15 +108,17 @@ AudioSrc.prototype.play = function(){
 		};
 	}
 
-	this.bufferSource[k].connect(this.analyser);
-	this.analyser.connect(this.node);
-	this.node.connect(this.ctx.destination);
-	this.node.onaudioprocess = function(eve){onprocessEvent(eve);};
-
+	if(this.background){
+		this.bufferSource[k].connect(this.analyser);
+		this.analyser.connect(this.node);
+		this.node.connect(this.ctx.destination);
+		this.node.onaudioprocess = function(eve){onprocessEvent(eve);};
+	}
 	this.bufferSource[k].connect(this.gain);
 	this.bufferSource[k].start(0);
 	this.bufferSource[k].playnow = true; // custom property
 
+	// caution! : global variable [count] use
 	function onprocessEvent(eve){
 		if(tmp.count !== count){
 			tmp.count = count;
