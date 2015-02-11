@@ -18,7 +18,8 @@ var rad = new radian();
 
 var scene = 0;
 var count = 0;
-var score = 0;
+var startTimes = 0;
+var getTimes = 0;
 var run = true;
 var pi  = Math.PI;
 
@@ -90,6 +91,16 @@ function main(){
 		[3],
 		['map', 'mapSize', 'resolution'],
 		['1i', '1f', '2fv']
+	);
+
+	// glow programs ----------------------------------------------------------
+	var glowPrg = w.generate_program(
+		'glowVS',
+		'glowFS',
+		['position'],
+		[3],
+		['mode', 'time', 'resolution', 'texture'],
+		['1i', '1f', '2fv', '1i']
 	);
 
 	// edge programs ----------------------------------------------------------
@@ -285,6 +296,9 @@ function main(){
 	torna = new Char();
 	torna.init();
 
+	// variable initialize
+	startTimes = Date.now();
+
 	// render -----------------------------------------------------------------
 	w.gl.activeTexture(w.gl.TEXTURE0);
 	w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
@@ -310,6 +324,7 @@ function main(){
 	function render(){
 		var i;
 		var gl = w.gl;
+		getTimes = (Date.now() - startTimes) / 1000;
 
 		// initialize
 		count++;
@@ -396,6 +411,14 @@ function main(){
 			0
 		]);
 		gl.drawElements(gl.TRIANGLES, testIndexLength, gl.UNSIGNED_SHORT, 0);
+
+
+		gl.bindTexture(gl.TEXTURE_2D, noiseBuffer.t);
+		glowPrg.set_program();
+		glowPrg.set_attribute(noiseVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
+		glowPrg.push_shader([0, getTimes, [screenSize, screenSize], 0]);
+		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
 		// basePrg.set_program();

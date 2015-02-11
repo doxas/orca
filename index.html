@@ -237,6 +237,42 @@ void main(void){
 }
 		</script>
 
+		<!-- glow shader ====================================================================== -->
+		<script id="glowVS" type="x-shader/x-vertex">
+attribute vec3 position;
+
+void main(void){
+	gl_Position = vec4(position, 1.0);
+}
+		</script>
+		<script id="glowFS" type="x-shader/x-fragment">
+precision mediump float;
+
+uniform int   mode;
+uniform float time;
+uniform vec2  resolution;
+uniform sampler2D texture;
+
+const float PI = 3.1415926;
+const float PI2 = PI * 2.0;
+const float VC = 1.0 / 256.0;
+const vec3 deepColor = vec3(0.0, 0.2, 0.3);
+
+void main(void){
+	float dest = 0.0;
+	vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+	if(mode == 0){
+		float a = atan(p.x, p.y);
+		float l = length(p);
+		float u = a / PI2 + 0.5;
+		float v = time * VC;
+		dest = texture2D(texture, vec2(u, v)).r * l;
+		dest = pow(dest, 5.0);
+	}
+	gl_FragColor = vec4(deepColor * dest, 1.0);
+}
+		</script>
+
 		<script id="colorVS" type="x-shader/x-vertex">
 attribute vec3 position;
 attribute vec3 normal;
