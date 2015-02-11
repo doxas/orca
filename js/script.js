@@ -13,8 +13,8 @@ var offScreenSize = 512;
 var w   = new wgld();
 var mat = new matIV();
 var qtn = new qtnIV();
-var camQtn = qtn.identity(qtn.create());
 var rad = new radian();
+var camQtn = qtn.identity(qtn.create());
 
 var scene = 0;
 var count = 0;
@@ -23,7 +23,9 @@ var getTimes = 0;
 var run = true;
 var pi  = Math.PI;
 
-var torna;
+var torna = null;
+var jsonData = null;
+var jsonLoaded = false;
 
 // events
 
@@ -34,7 +36,7 @@ window.onload = function(){
 	var i = 0;
 	screenCanvas = document.getElementById('canvas');
 	screenSize = Math.min(window.innerWidth, window.innerHeight);
-	screenCanvas.width  = screenSize;
+	screenCanvas.width  = window.innerWidth;
 	screenCanvas.height = screenSize;
 	screenWidth  = screenCanvas.width;
 	screenHeight = screenCanvas.height;
@@ -49,7 +51,7 @@ window.onload = function(){
 
 	window.addEventListener('keydown', keyDown, true);
 
-	audioCtr.load('snd/bgm2.mp3', 0, true, true);
+	audioCtr.load('snd/bgm3.mp3', 0, true, true);
 
 	var e = document.getElementById('info');
 	e.innerText = 'loading...';
@@ -211,6 +213,16 @@ function main(){
 	var noiseIndex       = w.create_ibo(noiseData.index);
 	var noiseIndexLength = noiseData.index.length;
 
+	// json
+	var jsonPosition = null;
+	var jsonnormal   = null;
+	var jsoncolor    = null;
+	var jsontexcoord = null;
+	var jsonvbolist  = null;
+	var jsonindex    = null;
+	var jsonindexlength = 0;
+	jsonLoader('mdl/whale.json');
+
 	// matrix and other data initialize phase ---------------------------------
 	var mMatrix   = mat.identity(mat.create());
 	var vMatrix   = mat.identity(mat.create());
@@ -224,16 +236,6 @@ function main(){
 	mat.lookAt([0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
 	mat.ortho(-1.0, 1.0, 1.0, -1.0, 0.1, 1.0, pMatrix);
 	mat.multiply(pMatrix, vMatrix, ortMatrix);
-
-	// camera and scene
-	var camPosition = [0.0, 0.0, 10.0];
-	var camCenter   = [0.0, 0.0, 0.0];
-	var camUp       = [0.0, 1.0, 0.0];
-	mat.lookAt(camPosition, camCenter, camUp, vMatrix);
-	mat.perspective(45, 1.0, 0.1, 15.0, pMatrix);
-	mat.multiply(pMatrix, vMatrix, tmpMatrix);
-
-	var lightPosition = [0.577, 0.577, 0.577];
 
 	// texture initialize phase -----------------------------------------------
 	w.create_texture('img/chip.png', 0);
@@ -305,13 +307,26 @@ function main(){
 
 	// loading wait -----------------------------------------------------------
 	(function(){
-		if(audioCtr.loadComplete() && w.texture[0] != null){
+		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
 			// background music play
 			audioCtr.src[0].play();
 		
 			// dom update
 			document.getElementById('info').innerText = 'done';
 		
+			// jsondata initialize phase --------------------------------------
+			jsonData.color = [];
+			for(var i = 0, j = jsonData.vertex; i < j; i++){
+				jsonData.color.push(1.0, 1.0, 1.0, 1.0);
+			}
+			jsonPosition = w.create_vbo(jsonData.position);
+			jsonNormal   = w.create_vbo(jsonData.normal);
+			jsonColor    = w.create_vbo(jsonData.color);
+			jsonTexCoord = w.create_vbo(jsonData.texCoord);
+			jsonVBOList  = [jsonPosition, jsonNormal, jsonColor, jsonTexCoord];
+			jsonIndex    = w.create_ibo(jsonData.index);
+			jsonIndexLength = jsonData.index.length;
+
 			// renderer
 			render();
 		}else{
@@ -328,7 +343,20 @@ function main(){
 
 		// initialize
 		count++;
-		gl.clear(gl.COLOR_BUFFER_BIT);
+		screenWidth = window.innerWidth;
+		screenHeight = window.innerHeight;
+		screenAspect = screenWidth / screenHeight;
+		screenCanvas.width = screenWidth;
+		screenCanvas.height = screenHeight;
+
+		// camera and scene
+		var camPosition = [0.0, 0.0, 10.0];
+		var camCenter   = [0.0, 0.0, 0.0];
+		var camUp       = [0.0, 1.0, 0.0];
+		mat.lookAt(camPosition, camCenter, camUp, vMatrix);
+		mat.perspective(45, screenAspect, 0.1, 15.0, pMatrix);
+		mat.multiply(pMatrix, vMatrix, tmpMatrix);
+		var lightPosition = [0.577, 0.577, 0.577];
 
 		// off screen
 		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
@@ -377,7 +405,7 @@ function main(){
 		// gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		// gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		// gl.viewport(0, 0, screenSize, screenSize);
+		// gl.viewport(0, 0, screenWidth, screenHeight);
 		// boardPrg.set_program();
 		// boardPrg.set_attribute(boardVBOList);
 		// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
@@ -390,7 +418,7 @@ function main(){
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.viewport(0, 0, screenSize, screenSize);
+		gl.viewport(0, 0, screenWidth, screenHeight);
 		colorPrg.set_program();
 		colorPrg.set_attribute(testVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, testIndex);
@@ -412,12 +440,31 @@ function main(){
 		]);
 		gl.drawElements(gl.TRIANGLES, testIndexLength, gl.UNSIGNED_SHORT, 0);
 
+		colorPrg.set_attribute(jsonVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
+		mat.identity(mMatrix);
+		mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
+		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 1.0], mMatrix);
+		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+		mat.inverse(mMatrix, invMatrix);
+		colorPrg.push_shader([
+			mMatrix,
+			mvpMatrix,
+			invMatrix,
+			lightPosition,
+			camPosition,
+			camCenter,
+			[0.0, 0.0, 0.0, 1.0],
+			0,
+			0
+		]);
+		gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		gl.bindTexture(gl.TEXTURE_2D, noiseBuffer.t);
 		glowPrg.set_program();
 		glowPrg.set_attribute(noiseVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
-		glowPrg.push_shader([0, getTimes, [screenSize, screenSize], 0]);
+		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 0]);
 		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
@@ -488,9 +535,22 @@ function keyDown(e){
 	if(ck === 27){
 		run = false;
 		audioCtr.src[0].end(0);
+	}else if(ck === 13){
+		fullscreenRequest();
 	}
 }
 
+function fullscreenRequest(){
+	if(screenCanvas.requestFullscreen){
+		screenCanvas.requestFullscreen();
+	}else if(screenCanvas.webkitRequestFullscreen){
+		screenCanvas.webkitRequestFullscreen();
+	}else if(screenCanvas.mozRequestFullscreen){
+		screenCanvas.mozRequestFullscreen();
+	}else if(screenCanvas.msRequestFullscreen){
+		screenCanvas.msRequestFullscreen();
+	}
+}
 function easing(t){
 	return t < 0.5 ? 4 * t * t * t : (t - 1) * (2 * t - 2) * (2 * t - 2) + 1;
 }
@@ -505,3 +565,19 @@ function easeQuintic(t){
 	return (tc * ts);
 }
 
+// ajax json data load ========================================================
+function jsonLoader(url){
+	var xml = new XMLHttpRequest();
+	xml.open('GET', url, true);
+	
+	xml.onload = function(){
+		jsonLoaded = false;
+		try{
+			jsonData = JSON.parse(xml.response);
+			jsonLoaded = true;
+		}catch(err){
+			console.log(err);
+		}
+	};
+	xml.send();
+}

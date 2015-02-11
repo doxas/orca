@@ -185,7 +185,7 @@ uniform bool  map;
 uniform float mapSize;
 uniform vec2  resolution;
 
-const int   oct  = 8;
+const int   oct  = 6;
 const float per  = 0.5;
 const float PI   = 3.1415926;
 const float cCorners = 1.0 / 16.0;
@@ -255,7 +255,7 @@ uniform sampler2D texture;
 
 const float PI = 3.1415926;
 const float PI2 = PI * 2.0;
-const float VC = 1.0 / 256.0;
+const float VC = 1.0 / 128.0;
 const vec3 deepColor = vec3(0.0, 0.2, 0.3);
 
 void main(void){
@@ -265,9 +265,9 @@ void main(void){
 		float a = atan(p.x, p.y);
 		float l = length(p);
 		float u = a / PI2 + 0.5;
-		float v = time * VC;
+		float v = mod(time, 128.0) * VC;
 		dest = texture2D(texture, vec2(u, v)).r * l;
-		dest = pow(dest, 5.0);
+		dest = pow(dest, 2.0) + 0.1;
 	}
 	gl_FragColor = vec4(deepColor * dest, 1.0);
 }
@@ -352,6 +352,6 @@ void main(){
 	</head>
 	<body>
 		<canvas id="canvas"></canvas>
-		<div id="navi"><p id="info"></p><p><a href="http://wgld.org/">wgld.org</a> - torna-do</p></div>
+		<div id="navi"><p id="info"></p><p><a href="http://wgld.org/">wgld.org</a> - orca</p></div>
 	</body>
 </html>
