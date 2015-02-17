@@ -182,8 +182,8 @@ function main(){
 	var blurIBO = w.create_ibo(idx);
 	var blurIndexLength = idx.length;
 
-	var testData = sphere(16, 16, 2.5);
-	var tempData = sphere(32, 32, 3.0);
+	var testData = sphere(16, 16, 2.5, null, [1.0, 0.0, 0.0], [1.0, 0.5, 1.0]);
+	var tempData = sphere(32, 32, 3.0, null, [0.0, 1.0, 0.0], [1.0, 0.5, 1.0]);
 	mergeIndex(testData, tempData);
 	var testPosition    = w.create_vbo(testData.position);
 	var testNormal      = w.create_vbo(testData.normal);

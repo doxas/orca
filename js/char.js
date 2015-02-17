@@ -21,12 +21,18 @@ function box(side){
 }
 
 // ball
-function ball(row, col, side){
+function ball(row, col, side, scale){
 	if(row < 3 || col < 3){return null;}
 	var obj = new mesh();
 	var pos = [];
 	var rSplit = (180 / (row - 1)) * Math.PI / 180;
 	var cSplit = (180 / (col - 1)) * Math.PI / 180;
+	var scl = [];
+	if(scale != null && scale.length === 3){
+		scl = scale;
+	}else{
+		scl = [1.0, 1.0, 1.0];
+	}
 	for(var i = 0; i < row - 1; i++){
 		var t = Math.cos(rSplit * i) * side;
 		var n = Math.cos(rSplit * (i + 1)) * side;
@@ -38,10 +44,10 @@ function ball(row, col, side){
 			var p = Math.sin(cSplit * (j + 1));
 			var q = Math.cos(cSplit * (j + 1));
 			pos.push(
-				x * v, t, z * v,
-				x * w, n, z * w,
-				p * v, t, q * v,
-				x * v, t, z * v
+				x * v * scl[0], t * scl[1], z * v * scl[2],
+				x * w * scl[0], n * scl[1], z * w * scl[2],
+				p * v * scl[0], t * scl[1], q * v * scl[2],
+				x * v * scl[0], t * scl[1], z * v * scl[2]
 			);
 		}
 	}

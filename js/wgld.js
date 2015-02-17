@@ -408,10 +408,20 @@ function cube(side, color){
 	return obj;
 }
 
-function sphere(row, column, rad, color){
-	var pos = new Array(), nor = new Array(),
-	    col = new Array(), st  = new Array(),
-	    idx = new Array();
+function sphere(row, column, rad, color, offset, scale){
+	var pos = [], nor = [],
+	    col = [], st  = [],
+	    idx = [], scl = [], ofs = [];
+	if(offset != null && offset.length === 3){
+		ofs = offset;
+	}else{
+		ofs = [0.0, 0.0, 0.0];
+	}
+	if(scale != null && scale.length === 3){
+		scl = scale;
+	}else{
+		scl = [1.0, 1.0, 1.0];
+	}
 	for(var i = 0; i <= row; i++){
 		var r = Math.PI / row * i;
 		var ry = Math.cos(r);
@@ -428,7 +438,7 @@ function sphere(row, column, rad, color){
 			}else{
 				tc = hsva(360 / row * i, 1, 1, 1);
 			}
-			pos.push(tx, ty, tz);
+			pos.push(tx * scl[0] + ofs[0], ty * scl[1] + ofs[1], tz * scl[2] + ofs[2]);
 			nor.push(rx, ry, rz);
 			col.push(tc[0], tc[1], tc[2], tc[3]);
 			st.push(1 - 1 / column * j, 1 / row * i);
