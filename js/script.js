@@ -186,14 +186,14 @@ function main(){
 	innerData[13] = sphere(16, 16, 1.0, [1.0, 1.0, 0.0, 1.0], [ 1.2, -1.5,  0.8], [0.3, 0.3, 0.3], 3.0);
 	innerData[14] = sphere(16, 16, 4.0, [0.5, 0.5, 0.5, 1.0], [-3.0,  0.2,  0.0], [0.3, 0.3, 0.3], 7.0);
 	innerData[15] = sphere(16, 16, 1.0, [0.8, 0.8, 0.8, 1.0], [ 1.8, -2.0, -0.8], [0.5, 0.5, 0.5], 6.0);
-	innerData[16] = sphere(16, 16, 1.5, [1.0, 0.2, 0.2, 1.0], [ 4.0,  0.0,  0.0], [1.0, 1.0, 1.0], 1.0);
-	innerData[17] = sphere(13, 13, 1.3, [1.0, 0.2, 0.2, 1.0], [ 8.0,  0.0,  0.0], [1.0, 1.0, 1.0], 2.0);
-	innerData[18] = sphere(10, 10, 1.1, [1.0, 0.2, 0.2, 1.0], [11.0,  0.0,  0.0], [1.0, 1.0, 1.0], 3.0);
-	innerData[19] = sphere( 8,  8, 0.9, [1.0, 0.2, 0.2, 1.0], [13.0,  0.0,  0.0], [1.0, 1.0, 1.0], 4.0);
-	innerData[20] = sphere( 8,  8, 0.6, [1.0, 0.2, 0.2, 1.0], [15.0,  0.0,  0.0], [1.0, 1.0, 1.0], 5.0);
-	innerData[21] = sphere( 4,  4, 0.4, [1.0, 0.2, 0.2, 1.0], [16.0,  0.0,  0.0], [1.0, 1.0, 1.0], 6.0);
-	innerData[22] = sphere( 4,  4, 0.3, [1.0, 0.2, 0.2, 1.0], [16.5,  0.0,  0.0], [1.0, 1.0, 1.0], 7.0);
-	innerData[23] = sphere( 2,  2, 0.2, [1.0, 0.2, 0.2, 1.0], [16.75, 0.0,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[16] = sphere(16, 16, 1.5, [1.0, 0.2, 0.2, 1.0], [ 4.0,  0.5,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[17] = sphere(13, 13, 1.3, [1.0, 0.2, 0.2, 1.0], [ 8.0,  0.2,  0.0], [1.0, 1.0, 1.0], 2.0);
+	innerData[18] = sphere(10, 10, 1.1, [1.0, 0.2, 0.2, 1.0], [10.5, -0.4,  0.0], [1.0, 1.0, 1.0], 3.0);
+	innerData[19] = sphere( 8,  8, 0.9, [1.0, 0.2, 0.2, 1.0], [13.0, -1.2,  0.0], [1.0, 1.0, 1.0], 4.0);
+	innerData[20] = sphere( 8,  8, 0.6, [1.0, 0.2, 0.2, 1.0], [15.0, -2.0,  0.0], [1.0, 1.0, 1.0], 5.0);
+	innerData[21] = sphere( 4,  4, 0.4, [1.0, 0.2, 0.2, 1.0], [16.0, -2.6,  0.0], [1.0, 1.0, 1.0], 6.0);
+	innerData[22] = sphere( 4,  4, 0.3, [1.0, 0.2, 0.2, 1.0], [16.8, -3.2,  0.0], [1.0, 1.0, 1.0], 7.0);
+	innerData[23] = sphere( 2,  2, 0.2, [1.0, 0.2, 0.2, 1.0], [17.4, -3.5,  0.0], [1.0, 1.0, 1.0], 1.0);
 	for(i = 1, j = innerData.length; i < j; i++){
 		mergeIndex(innerData[0], innerData[i]);
 	}
@@ -333,14 +333,17 @@ function main(){
 		
 			// jsondata initialize phase --------------------------------------
 			jsonData.color = [];
+			jsonData.type = [];
 			for(var i = 0, j = jsonData.vertex; i < j; i++){
-				jsonData.color.push(1.0, 1.0, 1.0, 1.0);
+				jsonData.color.push(0.3, 0.3, 0.3, 1.0);
+				jsonData.type.push(0.0);
 			}
 			jsonPosition = w.create_vbo(jsonData.position);
 			jsonNormal   = w.create_vbo(jsonData.normal);
 			jsonColor    = w.create_vbo(jsonData.color);
 			jsonTexCoord = w.create_vbo(jsonData.texCoord);
-			jsonVBOList  = [jsonPosition, jsonNormal, jsonColor, jsonTexCoord];
+			jsonType     = w.create_vbo(jsonData.type);
+			jsonVBOList  = [jsonPosition, jsonNormal, jsonColor, jsonTexCoord, jsonType];
 			jsonIndex    = w.create_ibo(jsonData.index);
 			jsonIndexLength = jsonData.index.length;
 
@@ -489,7 +492,8 @@ function main(){
 		// offrender
 		function offRender(){
 			// inner
-			var scaleCoef = audioCtr.src[0].onData[16] / 255;
+			var scaleCoef = 0.5;
+//			var scaleCoef = audioCtr.src[0].onData[16] / 255;
 			colorPrg.set_program();
 			colorPrg.set_attribute(innerVBOList);
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
@@ -514,8 +518,8 @@ function main(){
 			colorPrg.set_attribute(jsonVBOList);
 			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
 			mat.identity(mMatrix);
-			mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
-			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 1.0], mMatrix);
+			// mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
+			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
 			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 			mat.inverse(mMatrix, invMatrix);
 			colorPrg.push_shader([
