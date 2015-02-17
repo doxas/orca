@@ -108,4 +108,25 @@ Char.prototype.update = function(){
 	if(Math.abs(this.vpos.z) < 0.0005){this.vpos.z = 0;}
 };
 
+function canvasDrawer(id){
+	this.canvas = document.getElementById(id);
+	this.canvas.width = 1024;
+	this.canvas.height = 1024;
+	this.ctx = this.canvas.getContext('2d');
+	this.ctx.fillStyle = 'white';
+	this.ctx.textAlign = 'center';
+	this.ctx.textBaseline = 'top';
+	this.ctx.shadowBlur = 20;
+	this.ctx.shadowColor = 'white';
+}
+
+canvasDrawer.prototype.drawText = function(text, x, y, size){
+	this.ctx.font = 'bold ' + size + 'px consolas, Monaco, monospace';
+	this.ctx.fillText(text, x, y, 1024);
+};
+
+canvasDrawer.prototype.drawCircle = function(x, y, r){
+	this.ctx.arc(x, y, r, 0, Math.PI * 2, false);
+	this.ctx.fill();
+}
 

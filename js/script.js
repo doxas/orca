@@ -56,6 +56,12 @@ window.onload = function(){
 	var e = document.getElementById('info');
 	e.innerText = 'loading...';
 
+	var cd = new canvasDrawer('texture');
+	cd.drawText('BALENA', 512, 55, 240);
+	cd.drawText('doxas', 768, 680, 120);
+	cd.drawText('- wgld.org -', 768, 830, 32);
+	cd.drawCircle(256, 768, 200);
+
 	main();
 };
 
@@ -82,8 +88,8 @@ function main(){
 		'boardFS',
 		['index'],
 		[1],
-		['position', 'texCoord', 'texture', 'tex', 'bgcolor'],
-		['3fv', '2fv', '1i', '1i', '4fv']
+		['position', 'texCoord', 'texture', 'tex', 'bgcolor', 'aspect'],
+		['3fv', '2fv', '1i', '1i', '4fv', '1f']
 	);
 
 	// noise programs ---------------------------------------------------------
@@ -149,6 +155,7 @@ function main(){
 
 	// board const
 	var B_FULL = 0;
+	var B_TITLE = 1;
 
 	// board - full
 	boardPosition[B_FULL] = [
@@ -163,6 +170,21 @@ function main(){
 		0.0, 1.0,
 		1.0, 0.0,
 		1.0, 1.0
+	];
+
+	// board - title
+	boardPosition[B_TITLE] = [
+		-1.0,  1.0,  0.0,
+		-1.0, -1.0,  0.0,
+		 1.0,  1.0,  0.0,
+		 1.0, -1.0,  0.0
+	];
+	boardColor[B_TITLE] = [1.0, 1.0, 1.0, 1.0];
+	boardCoord[B_TITLE] = [
+		0.0, 1.0,
+		0.0, 0.0,
+		1.0, 1.0,
+		1.0, 0.0
 	];
 
 	var blurVBOList = [w.create_vbo(boardPosition[B_FULL]), w.create_vbo(boardCoord[B_FULL])];
@@ -251,7 +273,7 @@ function main(){
 	mat.multiply(pMatrix, vMatrix, ortMatrix);
 
 	// texture initialize phase -----------------------------------------------
-	w.create_texture('img/chip.png', 0);
+	w.create_texture_canvas(document.getElementById('texture'), 0);
 
 	// frame buffer  initialize phase -----------------------------------------
 	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
@@ -445,16 +467,21 @@ function main(){
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
 		// color
 		gl.bindTexture(gl.TEXTURE_2D, offSecondBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0]]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0], 1.0]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge blur
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [5.5, 5.5, 5.5, 1.0]]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [5.5, 5.5, 5.5, 1.0], 1.0]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge line
 		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0]]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0], 1.0]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+		// title text
+		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
+		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, [1.0, 1.0, 1.0, 1.0], screenAspect]);
+		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+
 
 		gl.bindTexture(gl.TEXTURE_2D, noiseBuffer.t);
 		glowPrg.set_program();
