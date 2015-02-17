@@ -65,7 +65,7 @@ function AudioSrc(ctx, gain, audioBuffer, loop, background){
 	this.bufferSource = [];
 	this.loop = loop;
 	this.loaded = false;
-	this.fftLoop = 64;
+	this.fftLoop = 8;
 	this.count = 0;
 	this.background = background;
 

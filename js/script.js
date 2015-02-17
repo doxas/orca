@@ -479,7 +479,7 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// title text
 		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
-		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, [1.0, 1.0, 1.0, 1.0], screenAspect]);
+		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, [1.0, 1.0, 1.0, 0.2], screenAspect]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
