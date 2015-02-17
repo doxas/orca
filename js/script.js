@@ -46,7 +46,7 @@ window.onload = function(){
 		i++;
 		offScreenSize = Math.pow(2, i);
 	}while(Math.pow(2, i + 1) < screenSize);
-	offScreenSize = Math.min(512, offScreenSize);
+	offScreenSize = Math.min(1024, offScreenSize);
 	bufferSize = offScreenSize;
 
 	window.addEventListener('keydown', keyDown, true);
@@ -143,7 +143,7 @@ function main(){
 	var boardPosition = new Array();
 	var boardColor = new Array();
 	var boardCoord = new Array();
-	var idx = [0, 2, 1, 1, 2, 3];
+	var idx = [0, 1, 2, 2, 1, 3];
 	var boardIndex = w.create_ibo(idx);
 	var boardIndexLength = idx.length;
 
@@ -159,27 +159,13 @@ function main(){
 	];
 	boardColor[B_FULL] = [1.0, 1.0, 1.0, 1.0];
 	boardCoord[B_FULL] = [
+		0.0, 0.0,
 		0.0, 1.0,
-		0.0, 0.0,
-		1.0, 1.0,
-		1.0, 0.0
-	];
-
-	// ortho
-	var pos = [
-	   -1.0,  1.0,  0.0,
-		1.0,  1.0,  0.0,
-	   -1.0, -1.0,  0.0,
-		1.0, -1.0,  0.0
-	];
-	var tex = [
-		0.0, 0.0,
 		1.0, 0.0,
-		0.0, 1.0,
 		1.0, 1.0
 	];
 
-	var blurVBOList = [w.create_vbo(pos), w.create_vbo(tex)];
+	var blurVBOList = [w.create_vbo(boardPosition[B_FULL]), w.create_vbo(boardCoord[B_FULL])];
 	var blurIBO = w.create_ibo(idx);
 	var blurIndexLength = idx.length;
 
@@ -187,19 +173,19 @@ function main(){
 	innerData[0]  = sphere(16, 16, 1.0, [1.0, 0.0, 0.0, 1.0], [ 0.0,  0.0,  0.0], [1.0, 1.0, 1.0], 0.0);
 	innerData[1]  = sphere(16, 16, 2.0, [0.0, 1.0, 0.0, 1.0], [ 0.5,  1.0,  0.8], [1.0, 0.3, 0.3], 1.0);
 	innerData[2]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 1.2,  0.2, -1.6], [0.8, 0.1, 0.1], 2.0);
-	innerData[3]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 1.6, -0.1, -2.0], [0.8, 0.1, 0.1], 2.0);
-	innerData[4]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 2.4, -0.4, -2.4], [0.8, 0.1, 0.1], 2.0);
+	innerData[3]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 1.6, -0.3, -2.0], [0.8, 0.1, 0.1], 2.0);
+	innerData[4]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 2.4, -0.8, -2.4], [0.8, 0.1, 0.1], 2.0);
 	innerData[5]  = sphere(16, 16, 2.0, [1.0, 1.0, 0.0, 1.0], [-0.8, -0.5,  0.8], [0.5, 0.3, 0.3], 3.0);
 	innerData[6]  = sphere(16, 16, 3.0, [1.0, 0.0, 1.0, 1.0], [-0.5, -0.8, -1.2], [0.6, 0.3, 0.3], 4.0);
 	innerData[7]  = sphere(16, 16, 2.0, [0.0, 1.0, 1.0, 1.0], [-0.8, -1.6,  1.6], [1.0, 0.3, 0.3], 5.0);
-	innerData[8]  = sphere(16, 16, 2.0, [1.0, 1.0, 1.0, 1.0], [ 1.8,  1.2, -1.6], [1.0, 0.5, 0.5], 6.0);
+	innerData[8]  = sphere(16, 16, 2.0, [0.8, 0.8, 0.8, 1.0], [ 1.8,  1.2, -1.6], [1.0, 0.5, 0.5], 6.0);
 	innerData[9]  = sphere(16, 16, 2.0, [0.5, 0.5, 0.5, 1.0], [ 1.6,  0.2,  1.6], [1.0, 0.3, 0.3], 7.0);
 	innerData[10] = sphere(16, 16, 3.0, [1.0, 0.0, 1.0, 1.0], [ 1.8, -0.5,  2.0], [0.4, 0.1, 0.1], 4.0);
 	innerData[11] = sphere(16, 16, 2.0, [0.0, 1.0, 1.0, 1.0], [ 0.2,  1.6,  0.2], [0.5, 0.3, 0.3], 5.0);
 	innerData[12] = sphere(16, 16, 2.0, [0.0, 1.0, 0.0, 1.0], [-1.6,  1.8,  1.0], [1.0, 0.3, 0.3], 1.0);
 	innerData[13] = sphere(16, 16, 1.0, [1.0, 1.0, 0.0, 1.0], [ 1.2, -1.5,  0.8], [0.3, 0.3, 0.3], 3.0);
 	innerData[14] = sphere(16, 16, 4.0, [0.5, 0.5, 0.5, 1.0], [-3.0,  0.2,  0.0], [0.3, 0.3, 0.3], 7.0);
-	innerData[15] = sphere(16, 16, 1.0, [1.0, 1.0, 1.0, 1.0], [ 1.8, -2.0, -0.8], [0.5, 0.5, 0.5], 6.0);
+	innerData[15] = sphere(16, 16, 1.0, [0.8, 0.8, 0.8, 1.0], [ 1.8, -2.0, -0.8], [0.5, 0.5, 0.5], 6.0);
 	innerData[16] = sphere(16, 16, 1.5, [1.0, 0.2, 0.2, 1.0], [ 4.0,  0.0,  0.0], [1.0, 1.0, 1.0], 1.0);
 	innerData[17] = sphere(13, 13, 1.3, [1.0, 0.2, 0.2, 1.0], [ 8.0,  0.0,  0.0], [1.0, 1.0, 1.0], 2.0);
 	innerData[18] = sphere(10, 10, 1.1, [1.0, 0.2, 0.2, 1.0], [11.0,  0.0,  0.0], [1.0, 1.0, 1.0], 3.0);
@@ -270,6 +256,7 @@ function main(){
 	// frame buffer  initialize phase -----------------------------------------
 	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
 	offScreenBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
+	offSecondBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
 	hBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
 	vBlurBuffer     = w.create_framebuffer(offScreenSize, offScreenSize);
 	edgeBuffer      = w.create_framebuffer(offScreenSize, offScreenSize);
@@ -288,6 +275,9 @@ function main(){
 
 	// initialize setting phase -----------------------------------------------
 	w.gl.bindFramebuffer(w.gl.FRAMEBUFFER, null);
+	w.gl.enable(w.gl.DEPTH_TEST);
+	w.gl.depthFunc(w.gl.LEQUAL);
+	w.gl.enable(w.gl.CULL_FACE);
 	w.gl.enable(w.gl.BLEND);
 	w.gl.blendFuncSeparate(w.gl.SRC_ALPHA, w.gl.ONE, w.gl.ONE, w.gl.ONE);
 	w.gl.blendEquationSeparate(w.gl.FUNC_ADD, w.gl.FUNC_ADD);
@@ -359,7 +349,6 @@ function main(){
 		}else{
 			setTimeout(arguments.callee, 100);
 		}
-		// render();
 	})();
 
 	// render function --------------------------------------------------------
@@ -375,6 +364,7 @@ function main(){
 		screenAspect = screenWidth / screenHeight;
 		screenCanvas.width = screenWidth;
 		screenCanvas.height = screenHeight;
+		gl.enable(gl.BLEND);
 
 		// camera and scene
 		var camPosition = [0.0, 0.0, 20.0];
@@ -385,15 +375,25 @@ function main(){
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
 		var lightPosition = [0.577, 0.577, 0.577];
 
+		// off screen blend draw
+		gl.bindFramebuffer(gl.FRAMEBUFFER, offSecondBuffer.f);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.viewport(0, 0, offScreenSize, offScreenSize);
+
+		offRender();
+
 		// off screen
+		gl.disable(gl.BLEND);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, offScreenSize, offScreenSize);
 
-		// char fase
-		torna.update();
-		basePrg.set_program();
-		charRender();
+		// // char fase
+		// torna.update();
+		// basePrg.set_program();
+		// charRender();
+
+		offRender();
 
 		// edge
 		gl.bindTexture(gl.TEXTURE_2D, offScreenBuffer.t);
@@ -428,64 +428,28 @@ function main(){
 		blurPrg.push_shader([ortMatrix, 0, weight, offScreenSize, false]);
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
 
-		// board
-		// gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
-		// gl.bindFramebuffer(gl.FRAMEBUFFER, null);
-		// gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		// gl.viewport(0, 0, screenWidth, screenHeight);
-		// boardPrg.set_program();
-		// boardPrg.set_attribute(boardVBOList);
-		// gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
-		// boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.25, 1.25, 1.25, 1.0]]);
-		// gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
-
-
-		// inner
-		var scaleCoef = audioCtr.src[0].onData[16] / 255;
-		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
+		// final scene
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, screenWidth, screenHeight);
-		colorPrg.set_program();
-		colorPrg.set_attribute(innerVBOList);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
-		mat.identity(mMatrix);
-		mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
-		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		mat.inverse(mMatrix, invMatrix);
-		colorPrg.push_shader([
-			mMatrix,
-			mvpMatrix,
-			invMatrix,
-			lightPosition,
-			camPosition,
-			camCenter,
-			[0.0, 0.0, 0.0, 1.0],
-			0,
-			0
-		]);
-		gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
+		gl.enable(gl.BLEND);
 
-		colorPrg.set_attribute(jsonVBOList);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
-		mat.identity(mMatrix);
-		mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
-		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 1.0], mMatrix);
-		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		mat.inverse(mMatrix, invMatrix);
-		colorPrg.push_shader([
-			mMatrix,
-			mvpMatrix,
-			invMatrix,
-			lightPosition,
-			camPosition,
-			camCenter,
-			[0.0, 0.0, 0.0, 1.0],
-			0,
-			0
-		]);
-		gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
+		// board
+		boardPrg.set_program();
+		boardPrg.set_attribute(boardVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, boardIndex);
+		// color
+		gl.bindTexture(gl.TEXTURE_2D, offSecondBuffer.t);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0]]);
+		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+		// edge blur
+		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.5, 1.5, 1.5, 1.0]]);
+		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+		// edge line
+		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0]]);
+		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		gl.bindTexture(gl.TEXTURE_2D, noiseBuffer.t);
 		glowPrg.set_program();
@@ -493,10 +457,6 @@ function main(){
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
 		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 0]);
 		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
-
-
-		// basePrg.set_program();
-		// charRender();
 
 
 		// finish
@@ -524,6 +484,52 @@ function main(){
 			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 			basePrg.push_shader([mvpMatrix, [1.0, 0.0, 0.0, 1.0]]);
 			gl.drawArrays(gl.LINE_STRIP, 0, ballIndexLength);
+		}
+
+		// offrender
+		function offRender(){
+			// inner
+			var scaleCoef = audioCtr.src[0].onData[16] / 255;
+			colorPrg.set_program();
+			colorPrg.set_attribute(innerVBOList);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
+			mat.identity(mMatrix);
+			mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
+			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+			mat.inverse(mMatrix, invMatrix);
+			colorPrg.push_shader([
+				mMatrix,
+				mvpMatrix,
+				invMatrix,
+				lightPosition,
+				camPosition,
+				camCenter,
+				[0.0, 0.0, 0.0, 1.0],
+				3,
+				0
+			]);
+			gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
+
+			colorPrg.set_attribute(jsonVBOList);
+			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
+			mat.identity(mMatrix);
+			mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
+			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 1.0], mMatrix);
+			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+			mat.inverse(mMatrix, invMatrix);
+			colorPrg.push_shader([
+				mMatrix,
+				mvpMatrix,
+				invMatrix,
+				lightPosition,
+				camPosition,
+				camCenter,
+				[0.0, 0.0, 0.0, 1.0],
+				3,
+				0
+			]);
+			gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
 		}
 	}
 }

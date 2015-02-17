@@ -94,7 +94,7 @@ void main(){
 	vec3  destColor = vec3(0.0);
 
 	if(horizon){
-		fc = vec2(gl_FragCoord.s, resolution - gl_FragCoord.t);
+		fc = vec2(gl_FragCoord.s, gl_FragCoord.t);
 		destColor += texture2D(texture, (fc + vec2(-4.0, 0.0)) * tFrag).rgb * weight[4];
 		destColor += texture2D(texture, (fc + vec2(-3.0, 0.0)) * tFrag).rgb * weight[3];
 		destColor += texture2D(texture, (fc + vec2(-2.0, 0.0)) * tFrag).rgb * weight[2];
@@ -165,8 +165,7 @@ void main(){
 	}
 
 	float mono = dot(vec3(redScale, greenScale, blueScale), destColor);
-	gl_FragColor = vec4(destColor, 1.0);
-//	gl_FragColor = vec4(vec3(mono), 1.0);
+	gl_FragColor = vec4(vec3(mono), 1.0);
 }
 		</script>
 

@@ -108,3 +108,4 @@ Char.prototype.update = function(){
 	if(Math.abs(this.vpos.z) < 0.0005){this.vpos.z = 0;}
 };
 
+
