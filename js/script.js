@@ -46,7 +46,7 @@ window.onload = function(){
 		i++;
 		offScreenSize = Math.pow(2, i);
 	}while(Math.pow(2, i + 1) < screenSize);
-	offScreenSize = Math.min(1024, offScreenSize);
+	offScreenSize = Math.max(1024, offScreenSize);
 	bufferSize = offScreenSize;
 
 	window.addEventListener('keydown', keyDown, true);
