@@ -278,6 +278,7 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec4 color;
 attribute vec2 texCoord;
+attribute float type;
 uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 varying   vec3 vPosition;
@@ -286,6 +287,7 @@ varying   vec4 vColor;
 varying   vec2 vTexCoord;
 
 void main(){
+	float t = type;
 	vPosition   = (mMatrix * vec4(position, 1.0)).xyz;
 	vNormal     = normal;
 	vColor      = color;

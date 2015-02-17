@@ -60,10 +60,11 @@ window.onload = function(){
 };
 
 function main(){
-	var ease5 = new Array();
-	var ease10 = new Array();
-	var ease20 = new Array();
-	var ease30 = new Array();
+	var i, j;
+	var ease5  = [];
+	var ease10 = [];
+	var ease20 = [];
+	var ease30 = [];
 
 	// line base shader program -----------------------------------------------
 	var basePrg = w.generate_program(
@@ -129,8 +130,8 @@ function main(){
 	var colorPrg = w.generate_program(
 		'colorVS',
 		'colorFS',
-		['position', 'normal', 'color', 'texCoord'],
-		[3, 3, 4, 2],
+		['position', 'normal', 'color', 'texCoord', 'type'],
+		[3, 3, 4, 2, 1],
 		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture'],
 		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i']
 	);
@@ -182,16 +183,42 @@ function main(){
 	var blurIBO = w.create_ibo(idx);
 	var blurIndexLength = idx.length;
 
-	var testData = sphere(16, 16, 2.5, null, [1.0, 0.0, 0.0], [1.0, 0.5, 1.0]);
-	var tempData = sphere(32, 32, 3.0, null, [0.0, 1.0, 0.0], [1.0, 0.5, 1.0]);
-	mergeIndex(testData, tempData);
-	var testPosition    = w.create_vbo(testData.position);
-	var testNormal      = w.create_vbo(testData.normal);
-	var testColor       = w.create_vbo(testData.color);
-	var testTexCoord    = w.create_vbo(testData.texCoord);
-	var testVBOList     = [testPosition, testNormal, testColor, testTexCoord];
-	var testIndex       = w.create_ibo(testData.index);
-	var testIndexLength = testData.index.length;
+	var innerData = [];
+	innerData[0]  = sphere(16, 16, 1.0, [1.0, 0.0, 0.0, 1.0], [ 0.0,  0.0,  0.0], [1.0, 1.0, 1.0], 0.0);
+	innerData[1]  = sphere(16, 16, 2.0, [0.0, 1.0, 0.0, 1.0], [ 0.5,  1.0,  0.8], [1.0, 0.3, 0.3], 1.0);
+	innerData[2]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 1.2,  0.2, -1.6], [0.8, 0.1, 0.1], 2.0);
+	innerData[3]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 1.6, -0.1, -2.0], [0.8, 0.1, 0.1], 2.0);
+	innerData[4]  = sphere(16, 16, 3.0, [0.0, 0.0, 1.0, 1.0], [ 2.4, -0.4, -2.4], [0.8, 0.1, 0.1], 2.0);
+	innerData[5]  = sphere(16, 16, 2.0, [1.0, 1.0, 0.0, 1.0], [-0.8, -0.5,  0.8], [0.5, 0.3, 0.3], 3.0);
+	innerData[6]  = sphere(16, 16, 3.0, [1.0, 0.0, 1.0, 1.0], [-0.5, -0.8, -1.2], [0.6, 0.3, 0.3], 4.0);
+	innerData[7]  = sphere(16, 16, 2.0, [0.0, 1.0, 1.0, 1.0], [-0.8, -1.6,  1.6], [1.0, 0.3, 0.3], 5.0);
+	innerData[8]  = sphere(16, 16, 2.0, [1.0, 1.0, 1.0, 1.0], [ 1.8,  1.2, -1.6], [1.0, 0.5, 0.5], 6.0);
+	innerData[9]  = sphere(16, 16, 2.0, [0.5, 0.5, 0.5, 1.0], [ 1.6,  0.2,  1.6], [1.0, 0.3, 0.3], 7.0);
+	innerData[10] = sphere(16, 16, 3.0, [1.0, 0.0, 1.0, 1.0], [ 1.8, -0.5,  2.0], [0.4, 0.1, 0.1], 4.0);
+	innerData[11] = sphere(16, 16, 2.0, [0.0, 1.0, 1.0, 1.0], [ 0.2,  1.6,  0.2], [0.5, 0.3, 0.3], 5.0);
+	innerData[12] = sphere(16, 16, 2.0, [0.0, 1.0, 0.0, 1.0], [-1.6,  1.8,  1.0], [1.0, 0.3, 0.3], 1.0);
+	innerData[13] = sphere(16, 16, 1.0, [1.0, 1.0, 0.0, 1.0], [ 1.2, -1.5,  0.8], [0.3, 0.3, 0.3], 3.0);
+	innerData[14] = sphere(16, 16, 4.0, [0.5, 0.5, 0.5, 1.0], [-3.0,  0.2,  0.0], [0.3, 0.3, 0.3], 7.0);
+	innerData[15] = sphere(16, 16, 1.0, [1.0, 1.0, 1.0, 1.0], [ 1.8, -2.0, -0.8], [0.5, 0.5, 0.5], 6.0);
+	innerData[16] = sphere(16, 16, 1.5, [1.0, 0.2, 0.2, 1.0], [ 4.0,  0.0,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[17] = sphere(13, 13, 1.3, [1.0, 0.2, 0.2, 1.0], [ 8.0,  0.0,  0.0], [1.0, 1.0, 1.0], 2.0);
+	innerData[18] = sphere(10, 10, 1.1, [1.0, 0.2, 0.2, 1.0], [11.0,  0.0,  0.0], [1.0, 1.0, 1.0], 3.0);
+	innerData[19] = sphere( 8,  8, 0.9, [1.0, 0.2, 0.2, 1.0], [13.0,  0.0,  0.0], [1.0, 1.0, 1.0], 4.0);
+	innerData[20] = sphere( 8,  8, 0.6, [1.0, 0.2, 0.2, 1.0], [15.0,  0.0,  0.0], [1.0, 1.0, 1.0], 5.0);
+	innerData[21] = sphere( 4,  4, 0.4, [1.0, 0.2, 0.2, 1.0], [16.0,  0.0,  0.0], [1.0, 1.0, 1.0], 6.0);
+	innerData[22] = sphere( 4,  4, 0.3, [1.0, 0.2, 0.2, 1.0], [16.5,  0.0,  0.0], [1.0, 1.0, 1.0], 7.0);
+	innerData[23] = sphere( 2,  2, 0.2, [1.0, 0.2, 0.2, 1.0], [16.75, 0.0,  0.0], [1.0, 1.0, 1.0], 1.0);
+	for(i = 1, j = innerData.length; i < j; i++){
+		mergeIndex(innerData[0], innerData[i]);
+	}
+	var innerPosition    = w.create_vbo(innerData[0].position);
+	var innerNormal      = w.create_vbo(innerData[0].normal);
+	var innerColor       = w.create_vbo(innerData[0].color);
+	var innerTexCoord    = w.create_vbo(innerData[0].texCoord);
+	var innerType        = w.create_vbo(innerData[0].type);
+	var innerVBOList     = [innerPosition, innerNormal, innerColor, innerTexCoord, innerType];
+	var innerIndex       = w.create_ibo(innerData[0].index);
+	var innerIndexLength = innerData[0].index.length;
 
 	// box lines
 	// var boxData = box(2.0);
@@ -350,11 +377,11 @@ function main(){
 		screenCanvas.height = screenHeight;
 
 		// camera and scene
-		var camPosition = [0.0, 0.0, 10.0];
+		var camPosition = [0.0, 0.0, 20.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
 		mat.lookAt(camPosition, camCenter, camUp, vMatrix);
-		mat.perspective(45, screenAspect, 0.1, 15.0, pMatrix);
+		mat.perspective(45, screenAspect, 0.1, 50.0, pMatrix);
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
 		var lightPosition = [0.577, 0.577, 0.577];
 
@@ -413,15 +440,15 @@ function main(){
 		// gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
-		// test
+		// inner
 		var scaleCoef = audioCtr.src[0].onData[16] / 255;
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
 		gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 		gl.viewport(0, 0, screenWidth, screenHeight);
 		colorPrg.set_program();
-		colorPrg.set_attribute(testVBOList);
-		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, testIndex);
+		colorPrg.set_attribute(innerVBOList);
+		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
 		mat.identity(mMatrix);
 		mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
 		mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
@@ -438,7 +465,7 @@ function main(){
 			0,
 			0
 		]);
-		gl.drawElements(gl.TRIANGLES, testIndexLength, gl.UNSIGNED_SHORT, 0);
+		gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		colorPrg.set_attribute(jsonVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
@@ -512,6 +539,7 @@ function mergeIndex(baseArr, concatArr){
 	baseArr.normal   = baseArr.normal.concat(concatArr.normal);
 	baseArr.color    = baseArr.color.concat(concatArr.color);
 	baseArr.texCoord = baseArr.texCoord.concat(concatArr.texCoord);
+	baseArr.type     = baseArr.type.concat(concatArr.type);
 }
 
 function returnCoordArray(num, round){

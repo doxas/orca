@@ -408,10 +408,10 @@ function cube(side, color){
 	return obj;
 }
 
-function sphere(row, column, rad, color, offset, scale){
+function sphere(row, column, rad, color, offset, scale, type){
 	var pos = [], nor = [],
 	    col = [], st  = [],
-	    idx = [], scl = [], ofs = [];
+	    idx = [], scl = [], ofs = [], typ = [];
 	if(offset != null && offset.length === 3){
 		ofs = offset;
 	}else{
@@ -442,6 +442,7 @@ function sphere(row, column, rad, color, offset, scale){
 			nor.push(rx, ry, rz);
 			col.push(tc[0], tc[1], tc[2], tc[3]);
 			st.push(1 - 1 / column * j, 1 / row * i);
+			typ.push(type);
 		}
 	}
 	r = 0;
@@ -458,6 +459,7 @@ function sphere(row, column, rad, color, offset, scale){
 	obj.color    = col;
 	obj.texCoord = st;
 	obj.index    = idx;
+	obj.type     = typ;
 	return obj;
 }
 
