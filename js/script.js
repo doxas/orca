@@ -275,7 +275,7 @@ function main(){
 
 	// initialize setting phase -----------------------------------------------
 	w.gl.bindFramebuffer(w.gl.FRAMEBUFFER, null);
-	w.gl.enable(w.gl.DEPTH_TEST);
+	//w.gl.enable(w.gl.DEPTH_TEST);
 	w.gl.depthFunc(w.gl.LEQUAL);
 	w.gl.enable(w.gl.CULL_FACE);
 	w.gl.enable(w.gl.BLEND);
@@ -290,9 +290,9 @@ function main(){
 	for(i = 0; i <= 30; i++){ease30[i] = easeOutCubic(i * (1 / 30));}
 
 	// gaussian weight
-	var weight = new Array(5);
+	var weight = new Array(10);
 	var t = 0.0;
-	var d = 50.0;
+	var d = 100.0;
 	for(var i = 0; i < weight.length; i++){
 		var r = 1.0 + 2.0 * i;
 		var v = Math.exp(-0.5 * (r * r) / d);
@@ -367,7 +367,6 @@ function main(){
 		screenAspect = screenWidth / screenHeight;
 		screenCanvas.width = screenWidth;
 		screenCanvas.height = screenHeight;
-		gl.enable(gl.BLEND);
 
 		// camera and scene
 		var camPosition = [0.0, 0.0, 20.0];
@@ -378,25 +377,28 @@ function main(){
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
 		var lightPosition = [0.577, 0.577, 0.577];
 
-		// off screen blend draw
-		gl.bindFramebuffer(gl.FRAMEBUFFER, offSecondBuffer.f);
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.viewport(0, 0, offScreenSize, offScreenSize);
-
-		offRender();
-
-		// off screen
-		gl.disable(gl.BLEND);
-		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
-		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-		gl.viewport(0, 0, offScreenSize, offScreenSize);
-
 		// // char fase
 		// torna.update();
 		// basePrg.set_program();
 		// charRender();
 
-		offRender();
+		// off screen blend draw
+		gl.enable(gl.BLEND);
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, offSecondBuffer.f);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.viewport(0, 0, offScreenSize, offScreenSize);
+
+		offRender(false, true);
+
+		// off screen edge color draw
+		gl.disable(gl.BLEND);
+
+		gl.bindFramebuffer(gl.FRAMEBUFFER, offScreenBuffer.f);
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+		gl.viewport(0, 0, offScreenSize, offScreenSize);
+
+		offRender(true, true);
 
 		// edge
 		gl.bindTexture(gl.TEXTURE_2D, offScreenBuffer.t);
@@ -447,7 +449,7 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge blur
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.5, 1.5, 1.5, 1.0]]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [5.5, 5.5, 5.5, 1.0]]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge line
 		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
@@ -490,50 +492,54 @@ function main(){
 		}
 
 		// offrender
-		function offRender(){
+		function offRender(jsons, inners){
 			// inner
 			var scaleCoef = 0.5;
 //			var scaleCoef = audioCtr.src[0].onData[16] / 255;
 			colorPrg.set_program();
-			colorPrg.set_attribute(innerVBOList);
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
-			mat.identity(mMatrix);
-			mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
-			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-			mat.inverse(mMatrix, invMatrix);
-			colorPrg.push_shader([
-				mMatrix,
-				mvpMatrix,
-				invMatrix,
-				lightPosition,
-				camPosition,
-				camCenter,
-				[0.0, 0.0, 0.0, 1.0],
-				3,
-				0
-			]);
-			gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
 
-			colorPrg.set_attribute(jsonVBOList);
-			gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
-			mat.identity(mMatrix);
-			// mat.scale(mMatrix, [5.0, 5.0, 5.0], mMatrix);
-			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-			mat.inverse(mMatrix, invMatrix);
-			colorPrg.push_shader([
-				mMatrix,
-				mvpMatrix,
-				invMatrix,
-				lightPosition,
-				camPosition,
-				camCenter,
-				[0.0, 0.0, 0.0, 1.0],
-				3,
-				0
-			]);
-			gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
+			if(jsons){
+				colorPrg.set_attribute(jsonVBOList);
+				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
+				mat.identity(mMatrix);
+				mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+				mat.inverse(mMatrix, invMatrix);
+				colorPrg.push_shader([
+					mMatrix,
+					mvpMatrix,
+					invMatrix,
+					lightPosition,
+					camPosition,
+					camCenter,
+					[0.0, 0.0, 0.0, 1.0],
+					3,
+					0
+				]);
+				gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
+			}
+
+			if(inners){
+				colorPrg.set_attribute(innerVBOList);
+				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
+				mat.identity(mMatrix);
+				mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
+				mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+				mat.inverse(mMatrix, invMatrix);
+				colorPrg.push_shader([
+					mMatrix,
+					mvpMatrix,
+					invMatrix,
+					lightPosition,
+					camPosition,
+					camCenter,
+					[0.0, 0.0, 0.0, 1.0],
+					3,
+					0
+				]);
+				gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
+			}
 		}
 	}
 }
