@@ -60,12 +60,24 @@ window.onload = function(){
 	cd.drawText('BALENA', 512, 75, 240, 20);
 	cd.drawText('doxas', 768, 680, 120, 20);
 	cd.drawText('- wgld.org -', 768, 830, 32, 20);
-	cd.drawCircle(256, 768, 176, 60);
-	cd.drawCircle(256, 768, 176, 50);
-	cd.drawCircle(256, 768, 176, 40);
-	cd.drawCircle(256, 768, 176, 30);
-	cd.drawCircle(256, 768, 176, 20);
-	cd.drawCircle(256, 768, 176, 10);
+	cd.drawCircle(256, 768, 120, 90);
+	cd.drawCircle(256, 768, 120, 90);
+	cd.drawCircle(256, 768, 120, 80);
+	cd.drawCircle(256, 768, 120, 80);
+	cd.drawCircle(256, 768, 120, 70);
+	cd.drawCircle(256, 768, 120, 70);
+	cd.drawCircle(256, 768, 120, 60);
+	cd.drawCircle(256, 768, 120, 60);
+	cd.drawCircle(256, 768, 120, 50);
+	cd.drawCircle(256, 768, 120, 50);
+	cd.drawCircle(256, 768, 120, 40);
+	cd.drawCircle(256, 768, 120, 40);
+	cd.drawCircle(256, 768, 120, 30);
+	cd.drawCircle(256, 768, 120, 30);
+	cd.drawCircle(256, 768, 120, 20);
+	cd.drawCircle(256, 768, 120, 20);
+	cd.drawCircle(256, 768, 120, 10);
+	cd.drawCircle(256, 768, 120, 10);
 
 	main();
 };
@@ -232,10 +244,10 @@ function main(){
 	innerData[6]  = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [-0.8, -1.3, -1.7], [0.6, 0.3, 0.3], 4.0);
 	innerData[7]  = sphere(16, 16, 1.0, [0.0, 0.7, 1.0, 1.0], [-1.3, -2.0,  2.0], [1.0, 0.3, 0.3], 5.0);
 	innerData[8]  = sphere(16, 16, 1.0, [0.6, 0.6, 0.8, 1.0], [ 2.3,  1.7, -2.0], [1.0, 0.5, 0.5], 6.0);
-	innerData[9]  = sphere(16, 16, 1.0, [0.5, 0.5, 0.5, 1.0], [ 2.1,  0.5,  2.0], [1.0, 0.3, 0.3], 7.0);
+	innerData[9]  = sphere(16, 16, 1.0, [0.5, 0.5, 0.5, 1.0], [ 2.1,  0.5,  2.0], [1.0, 0.3, 0.3], 2.0);
 	innerData[10] = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [ 2.3, -1.0,  2.5], [0.4, 0.1, 0.1], 4.0);
 	innerData[11] = sphere(16, 16, 1.5, [0.0, 0.7, 1.0, 1.0], [ 0.7,  2.0,  0.7], [0.5, 0.3, 0.3], 5.0);
-	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [ 4.0,  2.3, -2.5], [1.0, 0.3, 0.3], 1.0);
+	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [ 4.0,  2.3, -2.5], [1.0, 0.3, 0.3], 2.0);
 	innerData[13] = sphere(16, 16, 0.5, [0.7, 0.7, 0.2, 1.0], [ 1.7, -2.0,  1.3], [0.3, 0.3, 0.3], 3.0);
 	innerData[14] = sphere(16, 16, 2.0, [0.3, 0.3, 0.5, 1.0], [-3.0,  0.8,  0.0], [0.3, 0.3, 0.3], 4.0);
 	innerData[15] = sphere(16, 16, 0.5, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.5, 0.5, 0.5], 1.0);
@@ -245,7 +257,7 @@ function main(){
 	innerData[19] = sphere(16, 16, 0.7, [0.7, 0.1, 0.2, 1.0], [15.0, -1.2,  0.0], [1.0, 1.0, 1.0], 4.0);
 	innerData[20] = sphere(16, 16, 0.5, [0.7, 0.1, 0.2, 1.0], [16.8, -1.8,  0.0], [1.0, 1.0, 1.0], 5.0);
 	innerData[21] = sphere(16, 16, 0.3, [0.7, 0.1, 0.2, 1.0], [18.1, -2.2,  0.0], [1.0, 1.0, 1.0], 6.0);
-	innerData[22] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 7.0);
+	innerData[22] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 2.0);
 	innerData[23] = sphere(16, 16, 0.1, [0.7, 0.1, 0.2, 1.0], [20.0, -3.3,  0.0], [1.0, 1.0, 1.0], 1.0);
 	innerData[24] = sphere(16, 16, 1.0, [0.3, 0.3, 0.5, 1.0], [ 5.0, -2.0,  1.0], [0.5, 0.5, 0.5], 3.0);
 	for(i = 1, j = innerData.length; i < j; i++){
@@ -521,7 +533,7 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
-		// noise light line
+		// noise glow
 		glowPrg.set_program();
 		glowPrg.set_attribute(noiseVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
@@ -534,7 +546,7 @@ function main(){
 		particlePrg.set_attribute(particleVBOList);
 		mat.identity(mMatrix);
 		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.3, 0.5, 0.8, 1.0], 0, 1]);
+		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.2, 0.6, 0.7, 1.0], 0, 1]);
 		gl.drawArrays(gl.POINTS, 0, particleLength);
 
 
