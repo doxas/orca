@@ -507,6 +507,29 @@ function hexahedron(scales, halfRowSplit, holizonSplit, color){
 	return obj;
 }
 
+function cylinderParticle(zScale, rad, num){
+	var i;
+	var pos = [], prm = [];
+	for(i = 0; i < num; i++){
+		var rRadian = Math.random() * Math.PI * 2;
+		var rDepth = zScale - Math.random() * zScale * 2;
+		pos.push(
+			Math.cos(rRadian),
+			Math.sin(rRadian),
+			rDepth
+		);
+		prm.push(
+			Math.random(),
+			Math.random(),
+			Math.random()
+		);
+	}
+	var obj = {};
+	obj.position = pos;
+	obj.param = prm;
+	return obj;
+}
+
 function genNormal(v){
 	var n = [0, 0, 0];
 	for(var i = 0; i < v.length; i++){

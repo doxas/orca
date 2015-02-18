@@ -142,6 +142,16 @@ function main(){
 		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i', '1iv']
 	);
 
+	// particle programs ------------------------------------------------------
+	var particlePrg = w.generate_program(
+		'particleVS',
+		'particleFS',
+		['position', 'params'],
+		[3, 3],
+		['mMatrix', 'mvpMatrix', 'eyePosition', 'times', 'ambient', 'canvasTexture', 'noiseTexture'],
+		['matrix4fv', 'matrix4fv', '3fv', '1f', '4fv', '1i', '1i']
+	);
+
 	// board
 	var bIndex = [0, 1, 2, 3];
 	var board = w.create_vbo(bIndex);
@@ -248,6 +258,13 @@ function main(){
 	var noiseIndex       = w.create_ibo(noiseData.index);
 	var noiseIndexLength = noiseData.index.length;
 
+	// particle
+	var particleData = cylinderParticle(5.0, 1.0, 100);
+	var particlePosition = w.create_vbo(particleData.position);
+	var particleParam    = w.create_vbo(particleData.param);
+	var particleVBOList  = [particlePosition, particleParam];
+	var particleLength   = particleData.position.length / 3;
+
 	// json
 	var jsonPosition = null;
 	var jsonnormal   = null;
@@ -337,13 +354,6 @@ function main(){
 	torna = new Char();
 	torna.init();
 
-	// variable initialize
-	startTimes = Date.now();
-
-	// render -----------------------------------------------------------------
-	w.gl.activeTexture(w.gl.TEXTURE0);
-	w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
-
 	// loading wait -----------------------------------------------------------
 	(function(){
 		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
@@ -368,6 +378,14 @@ function main(){
 			jsonVBOList  = [jsonPosition, jsonNormal, jsonColor, jsonTexCoord, jsonType];
 			jsonIndex    = w.create_ibo(jsonData.index);
 			jsonIndexLength = jsonData.index.length;
+
+			// variable initialize
+			startTimes = Date.now();
+
+			// texture binding
+			w.gl.activeTexture(w.gl.TEXTURE1);
+			w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
+			w.gl.activeTexture(w.gl.TEXTURE0);
 
 			// renderer
 			render();
@@ -483,12 +501,21 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
-		gl.bindTexture(gl.TEXTURE_2D, noiseBuffer.t);
+		// noise light line
 		glowPrg.set_program();
 		glowPrg.set_attribute(noiseVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
-		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 0]);
+		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 1]);
 		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
+
+		// particle vetices
+		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
+		particlePrg.set_program();
+		particlePrg.set_attribute(particleVBOList);
+		mat.identity(mMatrix);
+		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
+		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [1.0, 0.0, 0.0, 1.0], 0, 1]);
+		gl.drawArrays(gl.POINTS, 0, particleLength);
 
 
 		// finish
