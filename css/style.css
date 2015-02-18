@@ -37,24 +37,30 @@ a:hover {
 }
 
 #navi {
-	background-color: rgba(128, 128, 128, 0.5);
-	text-align: right;
-	text-decoration: none;
-	text-shadow: 1px 1px 1px black;
-	line-height: 200%;
+	background-color: rgba(64, 64, 64, 0.5);
+	color: rgba(240, 240, 240, 0.75);
+	text-align: center;
+	margin: 0px;
 	width: 100%;
 	position: absolute;
-	bottom: 0px;
+	top: 0px;
+	transition: background-color 3s linear 0, color 3s linear 0;
+	-webkit-transition: background-color 3s linear 0, color 3s linear 0;
+}
+
+#navi.hide {
+	background-color: rgba(64, 64, 64, 0.0);
+	color: rgba(240, 240, 240, 0.0);
+	transition: background-color 3s linear 0, color 3s linear 0;
+	-webkit-transition: background-color 3s linear 0, color 3s linear 0;
+}
+
+#navi.none {
+	display: none;
 }
 
 #navi p {
 	padding: 0px 15px;
-}
-
-#info {
-	position: absolute;
-	bottom: 0px;
-	left: 0px;
 }
 
 .bufferCanvas {

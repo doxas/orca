@@ -398,7 +398,7 @@ void main(){
 	vec3 off = vec3(cos(times * params.x), sin(times * params.y), 0.0);
 	vec3 pos = (mMatrix * vec4(position + off, 1.0)).xyz;
 	vDistance = min(length(pos - eyePosition) * coef, 1.0);
-	gl_PointSize = (1.0 - vDistance) * 10.0;
+	gl_PointSize = pow(1.0 - vDistance, 10.0) * 100.0;
 	gl_Position = mvpMatrix * vec4(pos, 1.0);
 }
 		</script>
@@ -413,9 +413,9 @@ varying float vDistance;
 
 void main(){
 	vec2 uv = gl_PointCoord.st * 0.5 + vec2(0.0, 0.5);
-	vec3 smpColor = texture2D(canvasTexture, uv).rgb;
-	vec3 noiseColor = texture2D(noiseTexture, vec2(vParam)).rgb;
-	gl_FragColor = ambient * vec4(smpColor * noiseColor, 1.0 - vDistance);
+	vec4 smpColor = texture2D(canvasTexture, uv);
+	vec4 noiseColor = texture2D(noiseTexture, vec2(vParam));
+	gl_FragColor = ambient * vec4(smpColor.rgb * noiseColor.rgb, (1.1 - vDistance) * smpColor.a);
 }
 		</script>
 
@@ -423,6 +423,6 @@ void main(){
 	<body>
 		<canvas id="canvas"></canvas>
 		<canvas id="texture"></canvas>
-		<div id="navi"><p id="info"></p><p><a href="http://wgld.org/">wgld.org</a> - orca</p></div>
+		<div id="navi"></div>
 	</body>
 </html>

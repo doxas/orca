@@ -51,16 +51,22 @@ window.onload = function(){
 
 	window.addEventListener('keydown', keyDown, true);
 
-	audioCtr.load('snd/bgm3.mp3', 0, true, true);
+	audioCtr.load('snd/bgm3.mp3', 0, false, true);
 
-	var e = document.getElementById('info');
+	var e = document.getElementById('navi');
+	e.style.lineHeight = window.innerHeight + 'px';
 	e.innerText = 'loading...';
 
 	var cd = new canvasDrawer('texture');
-	cd.drawText('BALENA', 512, 55, 240);
-	cd.drawText('doxas', 768, 680, 120);
-	cd.drawText('- wgld.org -', 768, 830, 32);
-	cd.drawCircle(256, 768, 200);
+	cd.drawText('BALENA', 512, 75, 240, 20);
+	cd.drawText('doxas', 768, 680, 120, 20);
+	cd.drawText('- wgld.org -', 768, 830, 32, 20);
+	cd.drawCircle(256, 768, 176, 60);
+	cd.drawCircle(256, 768, 176, 50);
+	cd.drawCircle(256, 768, 176, 40);
+	cd.drawCircle(256, 768, 176, 30);
+	cd.drawCircle(256, 768, 176, 20);
+	cd.drawCircle(256, 768, 176, 10);
 
 	main();
 };
@@ -166,6 +172,7 @@ function main(){
 	// board const
 	var B_FULL = 0;
 	var B_TITLE = 1;
+	var B_END = 2;
 
 	// board - full
 	boardPosition[B_FULL] = [
@@ -184,16 +191,31 @@ function main(){
 
 	// board - title
 	boardPosition[B_TITLE] = [
-		-1.0,  1.0,  0.0,
-		-1.0, -1.0,  0.0,
-		 1.0,  1.0,  0.0,
-		 1.0, -1.0,  0.0
+		-1.0,  0.5,  0.0,
+		-1.0, -0.5,  0.0,
+		 1.0,  0.5,  0.0,
+		 1.0, -0.5,  0.0
 	];
 	boardColor[B_TITLE] = [1.0, 1.0, 1.0, 1.0];
 	boardCoord[B_TITLE] = [
 		0.0, 1.0,
-		0.0, 0.0,
+		0.0, 0.5,
 		1.0, 1.0,
+		1.0, 0.5
+	];
+
+	// board - end
+	boardPosition[B_END] = [
+		-0.5,  0.5,  0.0,
+		-0.5, -0.5,  0.0,
+		 0.5,  0.5,  0.0,
+		 0.5, -0.5,  0.0
+	];
+	boardColor[B_END] = [1.0, 1.0, 1.0, 1.0];
+	boardCoord[B_END] = [
+		0.5, 0.5,
+		0.5, 0.0,
+		1.0, 0.5,
 		1.0, 0.0
 	];
 
@@ -219,13 +241,13 @@ function main(){
 	innerData[14] = sphere(16, 16, 3.0, [0.3, 0.3, 0.5, 1.0], [-3.0,  0.8,  0.0], [0.3, 0.3, 0.3], 7.0);
 	innerData[15] = sphere(16, 16, 1.0, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.5, 0.5, 0.5], 6.0);
 	innerData[16] = sphere(16, 16, 1.5, [0.7, 0.1, 0.2, 1.0], [ 4.0,  0.5,  0.0], [1.0, 1.0, 1.0], 1.0);
-	innerData[17] = sphere(13, 13, 1.3, [0.7, 0.1, 0.2, 1.0], [ 9.0,  0.2,  0.0], [1.0, 1.0, 1.0], 2.0);
-	innerData[18] = sphere(10, 10, 1.1, [0.7, 0.1, 0.2, 1.0], [12.5, -0.4,  0.0], [1.0, 1.0, 1.0], 3.0);
-	innerData[19] = sphere( 8,  8, 0.9, [0.7, 0.1, 0.2, 1.0], [15.0, -1.2,  0.0], [1.0, 1.0, 1.0], 4.0);
-	innerData[20] = sphere( 8,  8, 0.6, [0.7, 0.1, 0.2, 1.0], [16.8, -1.8,  0.0], [1.0, 1.0, 1.0], 5.0);
-	innerData[21] = sphere( 4,  4, 0.4, [0.7, 0.1, 0.2, 1.0], [18.1, -2.2,  0.0], [1.0, 1.0, 1.0], 6.0);
-	innerData[22] = sphere( 4,  4, 0.3, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 7.0);
-	innerData[23] = sphere( 4,  4, 0.2, [0.7, 0.1, 0.2, 1.0], [20.0, -3.3,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[17] = sphere(16, 16, 1.3, [0.7, 0.1, 0.2, 1.0], [ 9.0,  0.2,  0.0], [1.0, 1.0, 1.0], 2.0);
+	innerData[18] = sphere(16, 16, 1.1, [0.7, 0.1, 0.2, 1.0], [12.5, -0.4,  0.0], [1.0, 1.0, 1.0], 3.0);
+	innerData[19] = sphere(16, 16, 0.9, [0.7, 0.1, 0.2, 1.0], [15.0, -1.2,  0.0], [1.0, 1.0, 1.0], 4.0);
+	innerData[20] = sphere(16, 16, 0.6, [0.7, 0.1, 0.2, 1.0], [16.8, -1.8,  0.0], [1.0, 1.0, 1.0], 5.0);
+	innerData[21] = sphere(16, 16, 0.4, [0.7, 0.1, 0.2, 1.0], [18.1, -2.2,  0.0], [1.0, 1.0, 1.0], 6.0);
+	innerData[22] = sphere(16, 16, 0.3, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 7.0);
+	innerData[23] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [20.0, -3.3,  0.0], [1.0, 1.0, 1.0], 1.0);
 	for(i = 1, j = innerData.length; i < j; i++){
 		mergeIndex(innerData[0], innerData[i]);
 	}
@@ -259,7 +281,7 @@ function main(){
 	var noiseIndexLength = noiseData.index.length;
 
 	// particle
-	var particleData = cylinderParticle(50.0, 10.0, 1000);
+	var particleData = cylinderParticle(40.0, 20.0, 500);
 	var particlePosition = w.create_vbo(particleData.position);
 	var particleParam    = w.create_vbo(particleData.param);
 	var particleVBOList  = [particlePosition, particleParam];
@@ -357,12 +379,17 @@ function main(){
 	// loading wait -----------------------------------------------------------
 	(function(){
 		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
-			// background music play
-			audioCtr.src[0].play();
-		
-			// dom update
-			document.getElementById('info').innerText = 'done';
-		
+			// dom update and background music play
+			var e = document.getElementById('navi');
+			e.innerText = 'done';
+			e.className = 'hide';
+			setTimeout(function(){
+				e.className = 'none';
+				audioCtr.src[0].play();
+				render();
+			}, 50);
+			// }, 5000);
+
 			// jsondata initialize phase --------------------------------------
 			jsonData.color = [];
 			jsonData.type = [];
@@ -381,14 +408,12 @@ function main(){
 
 			// variable initialize
 			startTimes = Date.now();
+			scene = 0;
 
 			// texture binding
 			w.gl.activeTexture(w.gl.TEXTURE1);
 			w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
 			w.gl.activeTexture(w.gl.TEXTURE0);
-
-			// renderer
-			render();
 		}else{
 			setTimeout(arguments.callee, 100);
 		}
@@ -499,6 +524,10 @@ function main(){
 		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
 		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, [1.0, 1.0, 1.0, 0.2], screenAspect]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
+		// end text
+		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
+		boardPrg.push_shader([boardPosition[B_END], boardCoord[B_END], 0, true, [1.0, 1.0, 1.0, 0.2], screenAspect]);
+		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
 		// noise light line
@@ -514,7 +543,7 @@ function main(){
 		particlePrg.set_attribute(particleVBOList);
 		mat.identity(mMatrix);
 		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.1, 0.2, 0.5, 1.0], 0, 1]);
+		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.3, 0.5, 0.8, 1.0], 0, 1]);
 		gl.drawArrays(gl.POINTS, 0, particleLength);
 
 

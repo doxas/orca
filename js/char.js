@@ -116,16 +116,17 @@ function canvasDrawer(id){
 	this.ctx.fillStyle = 'white';
 	this.ctx.textAlign = 'center';
 	this.ctx.textBaseline = 'top';
-	this.ctx.shadowBlur = 20;
 	this.ctx.shadowColor = 'white';
 }
 
-canvasDrawer.prototype.drawText = function(text, x, y, size){
+canvasDrawer.prototype.drawText = function(text, x, y, size, blur){
+	this.ctx.shadowBlur = blur;
 	this.ctx.font = 'bold ' + size + 'px consolas, Monaco, monospace';
 	this.ctx.fillText(text, x, y, 1024);
 };
 
-canvasDrawer.prototype.drawCircle = function(x, y, r){
+canvasDrawer.prototype.drawCircle = function(x, y, r, blur){
+	this.ctx.shadowBlur = blur;
 	this.ctx.arc(x, y, r, 0, Math.PI * 2, false);
 	this.ctx.fill();
 }
