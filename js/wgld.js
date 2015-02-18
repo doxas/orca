@@ -513,9 +513,10 @@ function cylinderParticle(zScale, rad, num){
 	for(i = 0; i < num; i++){
 		var rRadian = Math.random() * Math.PI * 2;
 		var rDepth = zScale - Math.random() * zScale * 2;
+		var rLength = Math.random();
 		pos.push(
-			Math.cos(rRadian),
-			Math.sin(rRadian),
+			Math.cos(rRadian) * rad * rLength,
+			Math.sin(rRadian) * rad * rLength,
 			rDepth
 		);
 		prm.push(

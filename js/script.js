@@ -259,7 +259,7 @@ function main(){
 	var noiseIndexLength = noiseData.index.length;
 
 	// particle
-	var particleData = cylinderParticle(5.0, 1.0, 100);
+	var particleData = cylinderParticle(50.0, 10.0, 1000);
 	var particlePosition = w.create_vbo(particleData.position);
 	var particleParam    = w.create_vbo(particleData.param);
 	var particleVBOList  = [particlePosition, particleParam];
@@ -514,7 +514,7 @@ function main(){
 		particlePrg.set_attribute(particleVBOList);
 		mat.identity(mMatrix);
 		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [1.0, 0.0, 0.0, 1.0], 0, 1]);
+		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.1, 0.2, 0.5, 1.0], 0, 1]);
 		gl.drawArrays(gl.POINTS, 0, particleLength);
 
 
