@@ -23,7 +23,6 @@ var getTimes = 0;
 var run = true;
 var pi  = Math.PI;
 
-var torna = null;
 var jsonData = null;
 var jsonLoaded = false;
 
@@ -229,17 +228,17 @@ function main(){
 	innerData[2]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 1.5,  0.5, -1.9], [0.8, 0.1, 0.1], 2.0);
 	innerData[3]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 2.1, -0.7, -2.5], [0.8, 0.1, 0.1], 2.0);
 	innerData[4]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 2.7, -1.8, -2.5], [0.8, 0.1, 0.1], 2.0);
-	innerData[5]  = sphere(16, 16, 1.0, [0.7, 0.7, 1.0, 1.0], [-1.3, -1.0,  1.3], [0.5, 0.3, 0.3], 2.5);
+	innerData[5]  = sphere(16, 16, 1.0, [0.7, 0.7, 1.0, 1.0], [-1.3, -1.0,  1.3], [0.5, 0.3, 0.3], 3.0);
 	innerData[6]  = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [-0.8, -1.3, -1.7], [0.6, 0.3, 0.3], 4.0);
 	innerData[7]  = sphere(16, 16, 1.0, [0.0, 0.7, 1.0, 1.0], [-1.3, -2.0,  2.0], [1.0, 0.3, 0.3], 5.0);
 	innerData[8]  = sphere(16, 16, 1.0, [0.6, 0.6, 0.8, 1.0], [ 2.3,  1.7, -2.0], [1.0, 0.5, 0.5], 6.0);
 	innerData[9]  = sphere(16, 16, 1.0, [0.5, 0.5, 0.5, 1.0], [ 2.1,  0.5,  2.0], [1.0, 0.3, 0.3], 7.0);
 	innerData[10] = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [ 2.3, -1.0,  2.5], [0.4, 0.1, 0.1], 4.0);
 	innerData[11] = sphere(16, 16, 1.5, [0.0, 0.7, 1.0, 1.0], [ 0.7,  2.0,  0.7], [0.5, 0.3, 0.3], 5.0);
-	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [-2.0,  2.3,  1.5], [1.0, 0.3, 0.3], 1.0);
+	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [ 4.0,  2.3, -2.5], [1.0, 0.3, 0.3], 1.0);
 	innerData[13] = sphere(16, 16, 0.5, [0.7, 0.7, 0.2, 1.0], [ 1.7, -2.0,  1.3], [0.3, 0.3, 0.3], 3.0);
-	innerData[14] = sphere(16, 16, 2.0, [0.3, 0.3, 0.5, 1.0], [-3.0,  0.8,  0.0], [0.3, 0.3, 0.3], 7.0);
-	innerData[15] = sphere(16, 16, 0.5, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.5, 0.5, 0.5], 6.0);
+	innerData[14] = sphere(16, 16, 2.0, [0.3, 0.3, 0.5, 1.0], [-3.0,  0.8,  0.0], [0.3, 0.3, 0.3], 4.0);
+	innerData[15] = sphere(16, 16, 0.5, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.5, 0.5, 0.5], 1.0);
 	innerData[16] = sphere(16, 16, 1.3, [0.7, 0.1, 0.2, 1.0], [ 4.0,  0.5,  0.0], [1.0, 1.0, 1.0], 1.0);
 	innerData[17] = sphere(16, 16, 1.1, [0.7, 0.1, 0.2, 1.0], [ 9.0,  0.2,  0.0], [1.0, 1.0, 1.0], 2.0);
 	innerData[18] = sphere(16, 16, 0.9, [0.7, 0.1, 0.2, 1.0], [12.5, -0.4,  0.0], [1.0, 1.0, 1.0], 3.0);
@@ -248,6 +247,7 @@ function main(){
 	innerData[21] = sphere(16, 16, 0.3, [0.7, 0.1, 0.2, 1.0], [18.1, -2.2,  0.0], [1.0, 1.0, 1.0], 6.0);
 	innerData[22] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 7.0);
 	innerData[23] = sphere(16, 16, 0.1, [0.7, 0.1, 0.2, 1.0], [20.0, -3.3,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[24] = sphere(16, 16, 1.0, [0.3, 0.3, 0.5, 1.0], [ 5.0, -2.0,  1.0], [0.5, 0.5, 0.5], 3.0);
 	for(i = 1, j = innerData.length; i < j; i++){
 		mergeIndex(innerData[0], innerData[i]);
 	}
@@ -281,7 +281,7 @@ function main(){
 	var noiseIndexLength = noiseData.index.length;
 
 	// particle
-	var particleData = cylinderParticle(40.0, 20.0, 500);
+	var particleData = cylinderParticle(25.0, 10.0, 1000);
 	var particlePosition = w.create_vbo(particleData.position);
 	var particleParam    = w.create_vbo(particleData.param);
 	var particleVBOList  = [particlePosition, particleParam];
@@ -372,10 +372,6 @@ function main(){
 		1.0,  1.0,  1.0
 	];
 
-	// char
-	torna = new Char();
-	torna.init();
-
 	// loading wait -----------------------------------------------------------
 	(function(){
 		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
@@ -434,18 +430,13 @@ function main(){
 		screenCanvas.height = screenHeight;
 
 		// camera and scene
-		var camPosition = [0.0, 0.0, 20.0];
+		var camPosition = [0.0, 0.0, 25.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
 		mat.lookAt(camPosition, camCenter, camUp, vMatrix);
 		mat.perspective(45, screenAspect, 0.1, 50.0, pMatrix);
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
 		var lightPosition = [0.577, 0.577, 0.577];
-
-		// // char fase
-		// torna.update();
-		// basePrg.set_program();
-		// charRender();
 
 		// off screen blend draw
 		gl.enable(gl.BLEND);
@@ -551,29 +542,6 @@ function main(){
 		gl.flush();
 		if(run){requestAnimationFrame(render);}
 
-		// char render
-		function charRender(){
-			// box
-			basePrg.set_attribute(boxVBOList);
-			mat.identity(mMatrix);
-			mat.translate(mMatrix, [torna.position.x, torna.position.y, torna.position.z], mMatrix);
-			mat.scale(mMatrix, [torna.size * 2, torna.size * 2, torna.size * 2], mMatrix);
-			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 1.0], mMatrix);
-			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-			basePrg.push_shader([mvpMatrix, [1.0, 1.0, 1.0, 1.0]]);
-			gl.drawArrays(gl.LINE_STRIP, 0, boxIndexLength);
-
-			// ball
-			basePrg.set_attribute(ballVBOList);
-			mat.identity(mMatrix);
-			mat.translate(mMatrix, [torna.position.x, torna.position.y, torna.position.z], mMatrix);
-			mat.scale(mMatrix, [torna.size, torna.size, torna.size], mMatrix);
-			mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-			mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-			basePrg.push_shader([mvpMatrix, [1.0, 0.0, 0.0, 1.0]]);
-			gl.drawArrays(gl.LINE_STRIP, 0, ballIndexLength);
-		}
-
 		// offrender
 		function offRender(jsons, inners){
 			// inner
@@ -582,7 +550,6 @@ function main(){
 			for(var i = 0; i < 16; i++){
 				onData[i] = audioCtr.src[0].onData[i];
 			}
-//			var scaleCoef = audioCtr.src[0].onData[16] / 255;
 			colorPrg.set_program();
 
 			if(jsons){
