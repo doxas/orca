@@ -305,16 +305,23 @@ attribute float type;
 uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 uniform   int  onData[16];
+uniform   float times;
 varying   vec3 vPosition;
 varying   vec3 vNormal;
 varying   vec4 vColor;
 varying   vec2 vTexCoord;
 
 void main(){
+	vec3 pos = position;
 	float s = 0.0;
 	int i = int(type * 2.0);
-	if(i > 0){s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;}
-	vec3 pos = position + normal * s;
+	if(i > 0){
+		s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;
+		pos += normal * s;
+		pos.y += type * sin(times * 0.75) * 0.3;
+	}else{
+		pos.y += texCoord.t * sin(times * 0.75) * 2.0;
+	}
 	vPosition   = (mMatrix * vec4(pos, 1.0)).xyz;
 	vNormal     = normal;
 	vColor      = color;
@@ -374,8 +381,7 @@ void main(){
 		}
 	}
 
-	// gl_FragColor = destColor;
-	gl_FragColor = vec4(vec3(destColor.rgb * vTexCoord.t), 1.0);
+	gl_FragColor = destColor;
 }
 		</script>
 

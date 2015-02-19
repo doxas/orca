@@ -155,8 +155,8 @@ function main(){
 		'colorFS',
 		['position', 'normal', 'color', 'texCoord', 'type'],
 		[3, 3, 4, 2, 1],
-		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture', 'onData'],
-		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i', '1iv']
+		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture', 'onData', 'times'],
+		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i', '1iv', '1f']
 	);
 
 	// particle programs ------------------------------------------------------
@@ -245,7 +245,7 @@ function main(){
 	innerData[7]  = sphere(16, 16, 1.0, [0.0, 0.7, 1.0, 1.0], [-1.3, -2.0,  2.0], [1.0, 0.3, 0.3], 5.0);
 	innerData[8]  = sphere(16, 16, 1.0, [0.6, 0.6, 0.8, 1.0], [ 2.3,  1.7, -2.0], [1.0, 0.5, 0.5], 6.0);
 	innerData[9]  = sphere(16, 16, 1.0, [0.5, 0.5, 0.5, 1.0], [ 2.1,  0.5,  2.0], [1.0, 0.3, 0.3], 2.0);
-	innerData[10] = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [ 2.3, -1.0,  2.5], [0.4, 0.1, 0.1], 4.0);
+	innerData[10] = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [ 2.3, -1.0,  2.5], [0.4, 0.1, 0.1],10.0);
 	innerData[11] = sphere(16, 16, 1.5, [0.0, 0.7, 1.0, 1.0], [ 0.7,  2.0,  0.7], [0.5, 0.3, 0.3], 5.0);
 	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [ 4.0,  2.3, -2.5], [1.0, 0.3, 0.3], 2.0);
 	innerData[13] = sphere(16, 16, 0.5, [0.7, 0.7, 0.2, 1.0], [ 1.7, -2.0,  1.3], [0.3, 0.3, 0.3], 3.0);
@@ -257,8 +257,8 @@ function main(){
 	innerData[19] = sphere(16, 16, 0.7, [0.7, 0.1, 0.2, 1.0], [15.0, -1.2,  0.0], [1.0, 1.0, 1.0], 4.0);
 	innerData[20] = sphere(16, 16, 0.5, [0.7, 0.1, 0.2, 1.0], [16.8, -1.8,  0.0], [1.0, 1.0, 1.0], 5.0);
 	innerData[21] = sphere(16, 16, 0.3, [0.7, 0.1, 0.2, 1.0], [18.1, -2.2,  0.0], [1.0, 1.0, 1.0], 6.0);
-	innerData[22] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 2.0);
-	innerData[23] = sphere(16, 16, 0.1, [0.7, 0.1, 0.2, 1.0], [20.0, -3.3,  0.0], [1.0, 1.0, 1.0], 1.0);
+	innerData[22] = sphere(16, 16, 0.2, [0.7, 0.1, 0.2, 1.0], [18.8, -2.7,  0.0], [1.0, 1.0, 1.0], 7.0);
+	innerData[23] = sphere(16, 16, 0.1, [0.7, 0.1, 0.2, 1.0], [19.5, -3.3,  0.0], [1.0, 1.0, 1.0], 8.0);
 	innerData[24] = sphere(16, 16, 1.0, [0.3, 0.3, 0.5, 1.0], [ 5.0, -2.0,  1.0], [0.5, 0.5, 0.5], 3.0);
 	for(i = 1, j = innerData.length; i < j; i++){
 		mergeIndex(innerData[0], innerData[i]);
@@ -568,7 +568,7 @@ function main(){
 				colorPrg.set_attribute(jsonVBOList);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
 				mat.identity(mMatrix);
-				mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+				// mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
 				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 				mat.inverse(mMatrix, invMatrix);
 				colorPrg.push_shader([
@@ -581,7 +581,8 @@ function main(){
 					[0.0, 0.0, 0.0, 1.0],
 					3,
 					0,
-					onData
+					onData,
+					getTimes
 				]);
 				gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
 			}
@@ -591,7 +592,7 @@ function main(){
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
 				mat.identity(mMatrix);
 				mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
-				mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
+				// mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
 				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
 				mat.inverse(mMatrix, invMatrix);
 				colorPrg.push_shader([
@@ -604,7 +605,8 @@ function main(){
 					[0.0, 0.0, 0.0, 1.0],
 					3,
 					0,
-					onData
+					onData,
+					getTimes
 				]);
 				gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
 			}
