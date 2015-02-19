@@ -435,7 +435,7 @@ function main(){
 
 	// render function --------------------------------------------------------
 	function render(){
-		var i;
+		var i, j, k, l;
 		var gl = w.gl;
 		getTimes = (Date.now() - startTimes) / 1000;
 
@@ -456,6 +456,46 @@ function main(){
 		var camUp       = [0.0, 1.0, 0.0];
 		switch(scene){
 			case 0:
+				// opening scene > title fade in
+				i = getTimes / 5;
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0,  i ];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3, 0.0];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 5){scene++;}
+				break;
+			case 1:
+				// opening scene > title fade out
+				i = 1 - (getTimes - 5) / 5;
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0,  i ];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3, 0.0];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 10){scene++;}
+				break;
+			case 2:
+				// glow fade in
+				i = (getTimes - 10) / 10;
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3,  i ];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 20){scene++;}
+				break;
+				// 28 second over whale fade in
+			default :
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 1.0];
 				blurColor     = [5.5, 5.5, 5.5, 1.0];
@@ -464,20 +504,6 @@ function main(){
 				endColor      = [1.0, 1.0, 1.0, 1.0];
 				glowColor     = [0.0, 0.2, 0.3, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
-				if(getTimes > 5){scene++;}
-				break;
-			case 1:
-				whaleColor    = [1.0, 1.0, 1.0, 0.5];
-				innerColor    = [1.0, 1.0, 1.0, 0.5];
-				blurColor     = [1.5, 1.5, 1.5, 1.0];
-				edgeColor     = [1.0, 1.0, 1.0, 0.5];
-				titleColor    = [1.0, 1.0, 1.0, 1.0];
-				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [1.0, 0.2, 0.3, 1.0];
-				particleColor = [0.1, 0.5, 0.7, 0.5];
-				if(getTimes > 10){scene--;}
-				break;
-			default :
 				break;
 		}
 

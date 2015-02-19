@@ -375,9 +375,9 @@ void main(){
 	}else{
 		if(mode == 2){
 			smpColor  = texture2D(texture, vTexCoord.st);
-			destColor = vColor * smpColor;
+			destColor = vColor * smpColor * ambient;
 		}else{
-			destColor = vColor;
+			destColor = vColor * ambient;
 		}
 	}
 
