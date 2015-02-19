@@ -321,7 +321,6 @@ function main(){
 	var invMatrix = mat.identity(mat.create());
 	var ortMatrix = mat.identity(mat.create());
 	var jmMatrix  = mat.identity(mat.create());
-	var imMatrix  = mat.identity(mat.create());
 
 	// ortho
 	mat.lookAt([0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
@@ -453,7 +452,7 @@ function main(){
 		var whaleColor, innerColor;
 		var titleColor, endColor;
 		var blurColor, edgeColor, glowColor, particleColor;
-		var lines = 0.05, motion = false, monochrome = false;
+		var lines = 0.05, motion = 0, monochrome = false;
 		var camPosition = [0.0, 0.0, 25.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
@@ -461,7 +460,6 @@ function main(){
 		var onData = [];
 		for(var i = 0; i < 16; i++){onData[i] = audioCtr.src[0].onData[i];}
 		mat.identity(jmMatrix);
-		mat.identity(imMatrix);
 		switch(scene){
 			case 0:
 				// opening scene > title fade in
@@ -519,13 +517,10 @@ function main(){
 				monochrome = true;
 				i = Math.min((getTimes - 27) / 28, 1.0);
 				j = -(1.0 - i) * 125.0;
-				k = pi * 2.0 - ((1.0 - i) * 2.5) * pi / 10;
+				k = pi * 2.0 - (1.0 - i) * pi / 4;
 				mat.translate(jmMatrix, [0.0, 0.0, j], jmMatrix);
-				mat.translate(imMatrix, [0.0, 0.0, j], imMatrix);
 				mat.rotate(jmMatrix, rad.rad[270], [0.0, 1.0, 0.0], jmMatrix);
-				mat.rotate(imMatrix, rad.rad[270], [0.0, 1.0, 0.0], imMatrix);
 				mat.rotate(jmMatrix, k, [0.0, 1.0, 1.0], jmMatrix);
-				mat.rotate(imMatrix, k, [0.0, 1.0, 1.0], imMatrix);
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 0.0];
 				blurColor     = [5.5, 5.5, 5.5,  i ];
@@ -536,7 +531,29 @@ function main(){
 				particleColor = [0.1, 0.5, 0.7, 0.0];
 				if(getTimes > 55){scene++;}
 				break;
-				// 55 minute
+			case 5:
+				// whale roll
+				motion = 1;
+				monochrome = true;
+				camPosition = [0.0, 0.0, 8.0];
+				i = Math.min((getTimes - 55) / 26, 1.0);
+				j = (1.0 - i) * pi / 3;
+				mat.rotate(jmMatrix, j, [0.0, 1.0, 0.0], jmMatrix);
+				mat.rotate(jmMatrix, rad.rad[270], [0.0, 1.0, 0.0], jmMatrix);
+				mat.rotate(jmMatrix, rad.rad[85], [0.0, 0.0, 1.0], jmMatrix);
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3, 1.0];
+				particleColor = [0.1, 0.5, 0.7,  i ];
+				if(getTimes > 81){scene++;}
+				break;
+				// 81 second
+				// 83 second
+				// 135 second
 			default :
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 1.0];
@@ -689,11 +706,11 @@ function main(){
 				colorPrg.set_attribute(innerVBOList);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
 				mat.identity(mMatrix);
-				mat.scale(imMatrix, [scaleCoef, scaleCoef, scaleCoef], imMatrix);
-				mat.multiply(tmpMatrix, imMatrix, mvpMatrix);
-				mat.inverse(imMatrix, invMatrix);
+				mat.scale(jmMatrix, [scaleCoef, scaleCoef, scaleCoef], jmMatrix);
+				mat.multiply(tmpMatrix, jmMatrix, mvpMatrix);
+				mat.inverse(jmMatrix, invMatrix);
 				colorPrg.push_shader([
-					imMatrix,
+					jmMatrix,
 					mvpMatrix,
 					invMatrix,
 					lightPosition,

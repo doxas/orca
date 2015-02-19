@@ -317,7 +317,7 @@ uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 uniform   int  onData[16];
 uniform   float times;
-uniform   bool motion;
+uniform   int  motion;
 varying   vec3 vPosition;
 varying   vec3 vNormal;
 varying   vec4 vColor;
@@ -327,13 +327,13 @@ void main(){
 	vec3 pos = position;
 	float s = 0.0;
 	int i = int(type * 2.0);
-	if(motion){
+	if(motion > 0){
 		if(i > 0){
-			s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;
+			s += pow(float(onData[i]) / 255.0, 5.0) * 3.0;
 			pos += normal * s;
 			pos.y += type * sin(times * 0.75) * 0.2;
 		}else{
-			pos.y += texCoord.t * sin(times * 0.75);
+			if(motion > 1){pos.y += texCoord.t * sin(times * 0.75);}
 		}
 	}
 	vPosition   = (mMatrix * vec4(pos, 1.0)).xyz;
