@@ -374,7 +374,8 @@ void main(){
 		}
 	}
 
-	gl_FragColor = destColor;
+	// gl_FragColor = destColor;
+	gl_FragColor = vec4(vec3(destColor.rgb * vTexCoord.t), 1.0);
 }
 		</script>
 
