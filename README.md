@@ -6,7 +6,7 @@ webgl demo at TDF2015
 
 * type に応じて法線 color shader
 * particle blur system
-* 時間の制御
 * 尾ひれアニメーション
+* 時間の制御
 * カメラワーク
 * 

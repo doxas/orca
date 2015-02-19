@@ -274,11 +274,11 @@ uniform int   mode;
 uniform float time;
 uniform vec2  resolution;
 uniform sampler2D texture;
+uniform vec4  ambient;
 
 const float PI = 3.1415926;
 const float PI2 = PI * 2.0;
 const float VC = 1.0 / 128.0;
-const vec3 deepColor = vec3(0.0, 0.2, 0.3);
 
 void main(void){
 	float dest = 0.0;
@@ -291,7 +291,7 @@ void main(void){
 		dest = texture2D(texture, vec2(u, v)).r * l;
 		dest = pow(dest, 2.0) + 0.1;
 	}
-	gl_FragColor = vec4(deepColor * dest, 1.0);
+	gl_FragColor = vec4(ambient.rgb * dest, ambient.a);
 }
 		</script>
 
@@ -318,9 +318,9 @@ void main(){
 	if(i > 0){
 		s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;
 		pos += normal * s;
-		pos.y += type * sin(times * 0.75) * 0.3;
+		pos.y += type * sin(times * 0.75) * 0.2;
 	}else{
-		pos.y += texCoord.t * sin(times * 0.75) * 2.0;
+		pos.y += texCoord.t * sin(times * 0.75);
 	}
 	vPosition   = (mMatrix * vec4(pos, 1.0)).xyz;
 	vNormal     = normal;

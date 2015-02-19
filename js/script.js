@@ -6,7 +6,8 @@
 
 // global
 var screenCanvas, screenWidth, screenHeight, screenAspect;
-var noiseBuffer, offScreenBuffer, hBlurBuffer, vBlurBuffer;
+var noiseBuffer, offScreenBuffer, offSecondBuffer;
+var hBlurBuffer, vBlurBuffer, edgeBuffer;
 var screenSize = 512;
 var bufferSize = 512;
 var offScreenSize = 512;
@@ -60,24 +61,26 @@ window.onload = function(){
 	cd.drawText('BALENA', 512, 75, 240, 20);
 	cd.drawText('doxas', 768, 680, 120, 20);
 	cd.drawText('- wgld.org -', 768, 830, 32, 20);
-	cd.drawCircle(256, 768, 120, 90);
-	cd.drawCircle(256, 768, 120, 90);
-	cd.drawCircle(256, 768, 120, 80);
-	cd.drawCircle(256, 768, 120, 80);
-	cd.drawCircle(256, 768, 120, 70);
-	cd.drawCircle(256, 768, 120, 70);
-	cd.drawCircle(256, 768, 120, 60);
-	cd.drawCircle(256, 768, 120, 60);
-	cd.drawCircle(256, 768, 120, 50);
-	cd.drawCircle(256, 768, 120, 50);
-	cd.drawCircle(256, 768, 120, 40);
-	cd.drawCircle(256, 768, 120, 40);
-	cd.drawCircle(256, 768, 120, 30);
-	cd.drawCircle(256, 768, 120, 30);
-	cd.drawCircle(256, 768, 120, 20);
-	cd.drawCircle(256, 768, 120, 20);
-	cd.drawCircle(256, 768, 120, 10);
-	cd.drawCircle(256, 768, 120, 10);
+	cd.drawCircle(256, 768, 120, 100);
+	cd.drawCircle(256, 768, 120, 100);
+	cd.drawCircle(256, 768, 120,  90);
+	cd.drawCircle(256, 768, 120,  90);
+	cd.drawCircle(256, 768, 120,  80);
+	cd.drawCircle(256, 768, 120,  80);
+	cd.drawCircle(256, 768, 120,  70);
+	cd.drawCircle(256, 768, 120,  70);
+	cd.drawCircle(256, 768, 120,  60);
+	cd.drawCircle(256, 768, 120,  60);
+	cd.drawCircle(256, 768, 120,  50);
+	cd.drawCircle(256, 768, 120,  50);
+	cd.drawCircle(256, 768, 120,  40);
+	cd.drawCircle(256, 768, 120,  40);
+	cd.drawCircle(256, 768, 120,  30);
+	cd.drawCircle(256, 768, 120,  30);
+	cd.drawCircle(256, 768, 120,  20);
+	cd.drawCircle(256, 768, 120,  20);
+	cd.drawCircle(256, 768, 120,  10);
+	cd.drawCircle(256, 768, 120,  10);
 
 	main();
 };
@@ -125,8 +128,8 @@ function main(){
 		'glowFS',
 		['position'],
 		[3],
-		['mode', 'time', 'resolution', 'texture'],
-		['1i', '1f', '2fv', '1i']
+		['mode', 'time', 'resolution', 'texture', 'ambient'],
+		['1i', '1f', '2fv', '1i', '4fv']
 	);
 
 	// edge programs ----------------------------------------------------------
@@ -384,6 +387,9 @@ function main(){
 		1.0,  1.0,  1.0
 	];
 
+	// light
+	var lightPosition = [0.577, 0.577, 0.577];
+	
 	// loading wait -----------------------------------------------------------
 	(function(){
 		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
@@ -441,14 +447,44 @@ function main(){
 		screenCanvas.width = screenWidth;
 		screenCanvas.height = screenHeight;
 
-		// camera and scene
+		// scene
+		var whaleColor, innerColor;
+		var titleColor, endColor;
+		var blurColor, edgeColor, glowColor, particleColor;
 		var camPosition = [0.0, 0.0, 25.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
+		switch(scene){
+			case 0:
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 1.0];
+				endColor      = [1.0, 1.0, 1.0, 1.0];
+				glowColor     = [0.0, 0.2, 0.3, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 5){scene++;}
+				break;
+			case 1:
+				whaleColor    = [1.0, 1.0, 1.0, 0.5];
+				innerColor    = [1.0, 1.0, 1.0, 0.5];
+				blurColor     = [1.5, 1.5, 1.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.5];
+				titleColor    = [1.0, 1.0, 1.0, 1.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [1.0, 0.2, 0.3, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 0.5];
+				if(getTimes > 10){scene--;}
+				break;
+			default :
+				break;
+		}
+
+		// camera and scene
 		mat.lookAt(camPosition, camCenter, camUp, vMatrix);
 		mat.perspective(45, screenAspect, 0.1, 50.0, pMatrix);
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
-		var lightPosition = [0.577, 0.577, 0.577];
 
 		// off screen blend draw
 		gl.enable(gl.BLEND);
@@ -517,19 +553,19 @@ function main(){
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge blur
 		gl.bindTexture(gl.TEXTURE_2D, vBlurBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [5.5, 5.5, 5.5, 1.0], 1.0]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, blurColor, 1.0]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// edge line
 		gl.bindTexture(gl.TEXTURE_2D, edgeBuffer.t);
-		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, [1.0, 1.0, 1.0, 1.0], 1.0]);
+		boardPrg.push_shader([boardPosition[B_FULL], boardCoord[B_FULL], 0, true, edgeColor, 1.0]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// title text
 		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
-		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, [1.0, 1.0, 1.0, 0.2], screenAspect]);
+		boardPrg.push_shader([boardPosition[B_TITLE], boardCoord[B_TITLE], 0, true, titleColor, screenAspect]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 		// end text
 		gl.bindTexture(gl.TEXTURE_2D, w.texture[0]);
-		boardPrg.push_shader([boardPosition[B_END], boardCoord[B_END], 0, true, [1.0, 1.0, 1.0, 0.2], screenAspect]);
+		boardPrg.push_shader([boardPosition[B_END], boardCoord[B_END], 0, true, endColor, screenAspect]);
 		gl.drawElements(gl.TRIANGLES, boardIndexLength, gl.UNSIGNED_SHORT, 0);
 
 
@@ -537,7 +573,7 @@ function main(){
 		glowPrg.set_program();
 		glowPrg.set_attribute(noiseVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
-		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 1]);
+		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 1, glowColor]);
 		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		// particle vetices
@@ -546,7 +582,7 @@ function main(){
 		particlePrg.set_attribute(particleVBOList);
 		mat.identity(mMatrix);
 		mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, [0.2, 0.6, 0.7, 1.0], 0, 1]);
+		particlePrg.push_shader([mMatrix, mvpMatrix, camPosition, getTimes, particleColor, 0, 1]);
 		gl.drawArrays(gl.POINTS, 0, particleLength);
 
 
@@ -578,7 +614,7 @@ function main(){
 					lightPosition,
 					camPosition,
 					camCenter,
-					[0.0, 0.0, 0.0, 1.0],
+					whaleColor,
 					3,
 					0,
 					onData,
@@ -602,7 +638,7 @@ function main(){
 					lightPosition,
 					camPosition,
 					camCenter,
-					[0.0, 0.0, 0.0, 1.0],
+					innerColor,
 					3,
 					0,
 					onData,
