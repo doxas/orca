@@ -128,8 +128,8 @@ function main(){
 		'glowFS',
 		['position'],
 		[3],
-		['mode', 'time', 'resolution', 'texture', 'ambient'],
-		['1i', '1f', '2fv', '1i', '4fv']
+		['mode', 'time', 'resolution', 'texture', 'ambient', 'lines'],
+		['1i', '1f', '2fv', '1i', '4fv', '1f']
 	);
 
 	// edge programs ----------------------------------------------------------
@@ -138,8 +138,8 @@ function main(){
 		'edgeFS',
 		['position', 'texCoord'],
 		[3, 2],
-		['mvpMatrix', 'texture', 'kernel', 'resolution'],
-		['matrix4fv', '1i', '1fv', '1f']
+		['mvpMatrix', 'texture', 'kernel', 'resolution', 'monochrome'],
+		['matrix4fv', '1i', '1fv', '1f', '1i']
 	);
 
 	// blur programs ----------------------------------------------------------
@@ -158,8 +158,8 @@ function main(){
 		'colorFS',
 		['position', 'normal', 'color', 'texCoord', 'type'],
 		[3, 3, 4, 2, 1],
-		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture', 'onData', 'times'],
-		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i', '1iv', '1f']
+		['mMatrix', 'mvpMatrix', 'invMatrix', 'lightPosition', 'eyePosition', 'canterPoint', 'ambient', 'mode', 'texture', 'onData', 'times', 'motion'],
+		['matrix4fv', 'matrix4fv', 'matrix4fv', '3fv', '3fv', '3fv', '4fv', '1i', '1i', '1iv', '1f', '1i']
 	);
 
 	// particle programs ------------------------------------------------------
@@ -320,6 +320,8 @@ function main(){
 	var mvpMatrix = mat.identity(mat.create());
 	var invMatrix = mat.identity(mat.create());
 	var ortMatrix = mat.identity(mat.create());
+	var jmMatrix  = mat.identity(mat.create());
+	var imMatrix  = mat.identity(mat.create());
 
 	// ortho
 	mat.lookAt([0.0, 0.0, 0.5], [0.0, 0.0, 0.0], [0.0, 1.0, 0.0], vMatrix);
@@ -451,9 +453,15 @@ function main(){
 		var whaleColor, innerColor;
 		var titleColor, endColor;
 		var blurColor, edgeColor, glowColor, particleColor;
+		var lines = 0.05, motion = false, monochrome = false;
 		var camPosition = [0.0, 0.0, 25.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
+		var scaleCoef = 0.4;
+		var onData = [];
+		for(var i = 0; i < 16; i++){onData[i] = audioCtr.src[0].onData[i];}
+		mat.identity(jmMatrix);
+		mat.identity(imMatrix);
 		switch(scene){
 			case 0:
 				// opening scene > title fade in
@@ -494,7 +502,41 @@ function main(){
 				particleColor = [0.1, 0.5, 0.7, 0.0];
 				if(getTimes > 20){scene++;}
 				break;
-				// 28 second over whale fade in
+			case 3:
+				// wait
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 27){scene++;}
+				break;
+			case 4:
+				// whale fade in
+				monochrome = true;
+				i = Math.min((getTimes - 27) / 28, 1.0);
+				j = -(1.0 - i) * 125.0;
+				k = pi * 2.0 - ((1.0 - i) * 2.5) * pi / 10;
+				mat.translate(jmMatrix, [0.0, 0.0, j], jmMatrix);
+				mat.translate(imMatrix, [0.0, 0.0, j], imMatrix);
+				mat.rotate(jmMatrix, rad.rad[270], [0.0, 1.0, 0.0], jmMatrix);
+				mat.rotate(imMatrix, rad.rad[270], [0.0, 1.0, 0.0], imMatrix);
+				mat.rotate(jmMatrix, k, [0.0, 1.0, 1.0], jmMatrix);
+				mat.rotate(imMatrix, k, [0.0, 1.0, 1.0], imMatrix);
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5,  i ];
+				edgeColor     = [1.0, 1.0, 1.0,  i ];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.0, 0.2, 0.3, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 55){scene++;}
+				break;
+				// 55 minute
 			default :
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 1.0];
@@ -509,7 +551,7 @@ function main(){
 
 		// camera and scene
 		mat.lookAt(camPosition, camCenter, camUp, vMatrix);
-		mat.perspective(45, screenAspect, 0.1, 50.0, pMatrix);
+		mat.perspective(45, screenAspect, 0.1, 200.0, pMatrix);
 		mat.multiply(pMatrix, vMatrix, tmpMatrix);
 
 		// off screen blend draw
@@ -539,7 +581,7 @@ function main(){
 		edgePrg.set_program();
 		edgePrg.set_attribute(blurVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, blurIBO);
-		edgePrg.push_shader([ortMatrix, 0, kernel, offScreenSize]);
+		edgePrg.push_shader([ortMatrix, 0, kernel, offScreenSize, monochrome]);
 		gl.drawElements(gl.TRIANGLES, blurIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		// horizon blur
@@ -599,7 +641,7 @@ function main(){
 		glowPrg.set_program();
 		glowPrg.set_attribute(noiseVBOList);
 		gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, noiseIndex);
-		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 1, glowColor]);
+		glowPrg.push_shader([0, getTimes, [screenWidth, screenHeight], 1, glowColor, lines]);
 		gl.drawElements(gl.TRIANGLES, noiseIndexLength, gl.UNSIGNED_SHORT, 0);
 
 		// particle vetices
@@ -619,22 +661,15 @@ function main(){
 		// offrender
 		function offRender(jsons, inners){
 			// inner
-			var scaleCoef = 0.4;
-			var onData = [];
-			for(var i = 0; i < 16; i++){
-				onData[i] = audioCtr.src[0].onData[i];
-			}
 			colorPrg.set_program();
 
 			if(jsons){
 				colorPrg.set_attribute(jsonVBOList);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, jsonIndex);
-				mat.identity(mMatrix);
-				// mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-				mat.inverse(mMatrix, invMatrix);
+				mat.multiply(tmpMatrix, jmMatrix, mvpMatrix);
+				mat.inverse(jmMatrix, invMatrix);
 				colorPrg.push_shader([
-					mMatrix,
+					jmMatrix,
 					mvpMatrix,
 					invMatrix,
 					lightPosition,
@@ -644,7 +679,8 @@ function main(){
 					3,
 					0,
 					onData,
-					getTimes
+					getTimes,
+					motion
 				]);
 				gl.drawElements(gl.TRIANGLES, jsonIndexLength, gl.UNSIGNED_SHORT, 0);
 			}
@@ -653,12 +689,11 @@ function main(){
 				colorPrg.set_attribute(innerVBOList);
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, innerIndex);
 				mat.identity(mMatrix);
-				mat.scale(mMatrix, [scaleCoef, scaleCoef, scaleCoef], mMatrix);
-				// mat.rotate(mMatrix, rad.rad[count % 360], [0.0, 1.0, 0.0], mMatrix);
-				mat.multiply(tmpMatrix, mMatrix, mvpMatrix);
-				mat.inverse(mMatrix, invMatrix);
+				mat.scale(imMatrix, [scaleCoef, scaleCoef, scaleCoef], imMatrix);
+				mat.multiply(tmpMatrix, imMatrix, mvpMatrix);
+				mat.inverse(imMatrix, invMatrix);
 				colorPrg.push_shader([
-					mMatrix,
+					imMatrix,
 					mvpMatrix,
 					invMatrix,
 					lightPosition,
@@ -668,7 +703,8 @@ function main(){
 					3,
 					0,
 					onData,
-					getTimes
+					getTimes,
+					motion
 				]);
 				gl.drawElements(gl.TRIANGLES, innerIndexLength, gl.UNSIGNED_SHORT, 0);
 			}

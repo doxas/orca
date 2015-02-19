@@ -161,6 +161,7 @@ precision mediump float;
 uniform sampler2D texture;
 uniform float kernel[9];
 uniform float resolution;
+uniform bool  monochrome;
 varying vec2 vTexCoord;
 
 const float redScale   = 0.298912;
@@ -187,8 +188,11 @@ void main(){
 	}
 
 	float mono = dot(vec3(redScale, greenScale, blueScale), destColor);
-	gl_FragColor = vec4(destColor + mono, 1.0);
-	//gl_FragColor = vec4(vec3(mono), 1.0);
+	if(monochrome){
+		gl_FragColor = vec4(vec3(mono), 1.0);
+	}else{
+		gl_FragColor = vec4(destColor + mono, 1.0);
+	}
 }
 		</script>
 
@@ -275,14 +279,17 @@ uniform float time;
 uniform vec2  resolution;
 uniform sampler2D texture;
 uniform vec4  ambient;
+uniform float lines;
 
 const float PI = 3.1415926;
 const float PI2 = PI * 2.0;
 const float VC = 1.0 / 128.0;
+const vec3  lineColor = vec3(0.1, 1.0, 0.1);
 
 void main(void){
 	float dest = 0.0;
 	vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
+	float l = (sin(gl_FragCoord.y + time * 3.0) + 1.0) / 2.0;
 	if(mode == 0){
 		float a = atan(p.x, p.y);
 		float l = length(p);
@@ -291,7 +298,11 @@ void main(void){
 		dest = texture2D(texture, vec2(u, v)).r * l;
 		dest = pow(dest, 2.0) + 0.1;
 	}
-	gl_FragColor = vec4(ambient.rgb * dest, ambient.a);
+	vec4 destColor = vec4(ambient.rgb * dest, ambient.a);
+	if(lines > 0.0){
+		destColor = vec4(mix(destColor.rgb, lineColor, lines) * l, destColor.a);
+	}
+	gl_FragColor = destColor;
 }
 		</script>
 
@@ -306,6 +317,7 @@ uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 uniform   int  onData[16];
 uniform   float times;
+uniform   bool motion;
 varying   vec3 vPosition;
 varying   vec3 vNormal;
 varying   vec4 vColor;
@@ -315,12 +327,14 @@ void main(){
 	vec3 pos = position;
 	float s = 0.0;
 	int i = int(type * 2.0);
-	if(i > 0){
-		s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;
-		pos += normal * s;
-		pos.y += type * sin(times * 0.75) * 0.2;
-	}else{
-		pos.y += texCoord.t * sin(times * 0.75);
+	if(motion){
+		if(i > 0){
+			s += pow(float(onData[i]) / 255.0, 5.0) * 2.0;
+			pos += normal * s;
+			pos.y += type * sin(times * 0.75) * 0.2;
+		}else{
+			pos.y += texCoord.t * sin(times * 0.75);
+		}
 	}
 	vPosition   = (mMatrix * vec4(pos, 1.0)).xyz;
 	vNormal     = normal;
