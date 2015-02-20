@@ -405,8 +405,7 @@ function main(){
 				e.className = 'none';
 				audioCtr.src[0].play();
 				render();
-			}, 50);
-			// }, 5000);
+			}, 5000);
 
 			// jsondata initialize phase --------------------------------------
 			jsonData.color = [];
