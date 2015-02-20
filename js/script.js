@@ -29,7 +29,7 @@ var jsonLoaded = false;
 // events
 
 // audio
-var audioCtr = new AudioCtr(0.5, 0.5);
+var audioCtr = new AudioCtr(0.75, 0.75);
 
 window.onload = function(){
 	var i = 0;
@@ -650,7 +650,7 @@ function main(){
 				// white out
 				motion = 1;
 				monochrome = true;
-				i = Math.min((getTimes - 82), 1.0);
+				i = Math.min((getTimes - 82) * 1.25, 1.0);
 				j = i * 25;
 				lines *= 1.0 - i;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
@@ -666,13 +666,13 @@ function main(){
 				endColor      = [1.0, 1.0, 1.0, 0.0];
 				glowColor     = [0.0 + j, 0.2 + j, 0.3 + j, 1.0];
 				particleColor = [0.5, 0.8, 1.0, 1.0];
-				if(getTimes > 83){scene++;}
+				if(getTimes > 82.75){scene++;}
 				break;
 			case 11:
 				// fade in
 				motion = 2;
 				monochrome = false;
-				i = Math.min((getTimes - 83) * 4.0, 1.0);
+				i = Math.min((getTimes - 82.75) * 4.0, 1.0);
 				j = i * 25;
 				lines = 0.0;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
@@ -686,14 +686,14 @@ function main(){
 				endColor      = [1.0, 1.0, 1.0, 0.0];
 				glowColor     = [25.2 - j, 25.5 - j, 25.7 - j, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
-				if(getTimes > 83.25){scene++;}
+				if(getTimes > 83){scene++;}
 				break;
 			case 12:
 				// color 1
 				lines = 0.0;
 				motion = 2;
 				monochrome = false;
-				i = Math.min((getTimes - 83.25) / 5.75, 1.0);
+				i = Math.min((getTimes - 83) / 6.0, 1.0);
 				qtn.rotate(pi - pi * 2, [0.577, 0.577, 0.577], qt1);
 				qtn.rotate(pi - pi * 3, [0.0, 0.707, 0.707], qt2);
 				qtn.slerp(qt1, qt2, easing(i), qtd);
@@ -914,10 +914,10 @@ function main(){
 				motion = 2;
 				monochrome = false;
 				i = Math.min((getTimes - 165) / 15.0, 1.0);
-				j = easeOutCubic(i);
-				k = 1.0 - i;
+				j = easing(1.0 - i);
+				k = Math.pow(1.0 - i, 3.0);
 				lines = 0.2;
-				mat.translate(jmMatrix, [j * 5.0, j * -5.0, 0.0], jmMatrix);
+				mat.scale(jmMatrix, [j, j, j], jmMatrix);
 				qtn.rotate(pi - pi / 2, [0.0, 1.0, 0.0], qt1);
 				camPosition = [0.0, 15.0, 15.0];
 				camUp = [0.0, 0.707, -0.707];
@@ -940,6 +940,7 @@ function main(){
 				i = Math.min((getTimes - 180) / 10.0, 1.0);
 				j = 1.0 - i;
 				lines = 0.2;
+				qtn.rotate(pi - pi / 2, [0.0, 1.0, 0.0], qt1);
 				camPosition = [0.0, 15.0, 15.0];
 				camUp = [0.0, 0.707, -0.707];
 				qtn.toVecIII(camPosition, qt1, camPosition);
@@ -972,19 +973,6 @@ function main(){
 				break;
 			case 24:
 				run = false;
-				break;
-			default :
-				lines = 0.0;
-				motion = 2;
-				monochrome = false;
-				whaleColor    = [1.0, 1.0, 1.0, 1.0];
-				innerColor    = [1.0, 1.0, 1.0, 1.0];
-				blurColor     = [5.5, 5.5, 5.5, 1.0];
-				edgeColor     = [1.0, 1.0, 1.0, 1.0];
-				titleColor    = [1.0, 1.0, 1.0, 1.0];
-				endColor      = [1.0, 1.0, 1.0, 1.0];
-				glowColor     = [0.0, 0.2, 0.3, 1.0];
-				particleColor = [0.1, 0.5, 0.7, 1.0];
 				break;
 		}
 
