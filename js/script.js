@@ -295,7 +295,7 @@ function main(){
 	var noiseIndexLength = noiseData.index.length;
 
 	// particle
-	var particleData = cylinderParticle(25.0, 10.0, 1000);
+	var particleData = cylinderParticle(30.0, 20.0, 1500);
 	var particlePosition = w.create_vbo(particleData.position);
 	var particleParam    = w.create_vbo(particleData.param);
 	var particleVBOList  = [particlePosition, particleParam];
@@ -441,7 +441,7 @@ function main(){
 	function render(){
 		var i, j, k, l;
 		var gl = w.gl;
-		getTimes = (Date.now() - startTimes) / 1000 + 35;
+		getTimes = (Date.now() - startTimes) / 1000;
 
 		// initialize
 		count++;
@@ -635,7 +635,7 @@ function main(){
 				camPosition = [0.0, 0.0, 10.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
 				particleScale = 1.0 - easeQuintic(i);
-				particleSize = 1.0 + i;
+				particleSize = 1.0 + i * 5.0;
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 0.0];
 				blurColor     = [5.5, 5.5, 5.5, 1.0];
@@ -651,12 +651,12 @@ function main(){
 				motion = 1;
 				monochrome = true;
 				i = Math.min((getTimes - 82), 1.0);
-				j = i * 20;
+				j = i * 25;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
 				camPosition = [0.0, 0.0, 10.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
 				particleScale = easeQuintic(i);
-				particleSize = 2.0 - i;
+				particleSize = 6.0 - i * 5.0;
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0,  i ];
 				blurColor     = [5.5, 5.5, 5.5, 1.0];
@@ -672,10 +672,10 @@ function main(){
 				motion = 2;
 				monochrome = false;
 				i = Math.min((getTimes - 83), 1.0);
-				j = i * 20;
+				j = i * 25;
 				lines *= 1.0 - i;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
-				camPosition = [0.0, 0.0, 10.0 + i * 10.0];
+				camPosition = [0.0, 0.0, 10.0 + easeOutCubic(i) * 10.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 1.0];
@@ -683,7 +683,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 1.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [20.0 - j, 20.2 - j, 20.3 - j, 1.0];
+				glowColor     = [25.2 - j, 25.5 - j, 25.7 - j, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 84){scene++;}
 				break;
@@ -692,20 +692,145 @@ function main(){
 				lines = 0.0;
 				motion = 2;
 				monochrome = false;
-				i = Math.min((getTimes - 84), 1.0);
-				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
-				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
-				camPosition = [0.0, 0.0, 20.0];
+				i = Math.min((getTimes - 84) / 5.0, 1.0);
+				qtn.rotate(pi - pi * 2, [0.577, 0.577, 0.577], qt1);
+				qtn.rotate(pi - pi * 3, [0.0, 0.707, 0.707], qt2);
+				qtn.slerp(qt1, qt2, easing(i), qtd);
+				camPosition = [0.0, 0.0, 15.0 - i * 5.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
+				particleScale = 0.8;
+				particleSize = 1.5;
 				whaleColor    = [1.0, 1.0, 1.0, 1.0];
 				innerColor    = [1.0, 1.0, 1.0, 1.0];
 				blurColor     = [5.5, 5.5, 5.5, 1.0];
 				edgeColor     = [1.0, 1.0, 1.0, 1.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [0.0, 0.2, 0.3, 1.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
-				if(getTimes > 135){scene++;}
+				if(getTimes > 89){scene++;}
+				break;
+			case 13:
+				// color 2
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 89) / 5.0, 1.0);
+				qtn.rotate(pi - pi / 4, [0.0, 0.707, 0.707], qt1);
+				qtn.rotate(pi / 4, [0.707, -0.707, 0.0], qt2);
+				qtn.slerp(qt1, qt2, i, qtd);
+				camPosition = [0.0, 0.0, 20.0 - easeOutCubic(i) * 3.0];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 0.8;
+				particleSize = 1.5;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 94){scene++;}
+				break;
+			case 14:
+				// color 3
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 94) / 6.0, 1.0);
+				qtn.rotate(pi / 4, [0.577, 0.577, 0.577], qt1);
+				qtn.rotate(pi - pi * 2, [0.0, 1.0, 0.0], qt2);
+				qtn.slerp(qt1, qt2, i, qtd);
+				camPosition = [0.0, 0.0, 10.0 - i * 0.1];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 0.8;
+				particleSize = 2.0;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 100){scene++;}
+				break;
+			case 15:
+				// color 4
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 100) / 10.0, 1.0);
+				qtn.rotate(pi / 4, [-0.577, 0.577, 0.577], qt1);
+				qtn.rotate(pi - pi / 4, [0.707, 0.707, 0.0], qt2);
+				qtn.slerp(qt1, qt2, i, qtd);
+				camPosition = [0.0, 0.0, 7.0 + i * 8.0];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 2.5;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 110){scene++;}
+				break;
+			case 16:
+				// color 5
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 110) / 5.0, 1.0);
+				qtn.rotate(pi - pi * 2, [-0.577, 0.577, 0.577], qt1);
+				qtn.rotate(pi - pi * 2, [0.707, 0.707, 0.0], qt2);
+				qtn.slerp(qt1, qt2, i, qtd);
+				camPosition = [0.0, 1.0, 10.0];
+				camCenter = [0.0, 1.0, 3.0 - i * 6.0];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 2.5;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 115){scene++;}
+				break;
+			case 17:
+				// color 6
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 115) / 15.0, 1.0);
+				qtn.rotate(pi - pi / 4, [0.0, 1.0, 0.0], qt1);
+				qtn.rotate(pi / 2, [0.0, 1.0, 0.0], qt2);
+				qtn.slerp(qt1, qt2, i, qtd);
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 2.0 + i * 10.0;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2, 0.5, 0.7, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 130){scene++;}
 				break;
 			default :
 				lines = 0.0;
