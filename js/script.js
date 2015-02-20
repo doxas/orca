@@ -239,9 +239,9 @@ function main(){
 	var innerData = [];
 	innerData[0]  = sphere(16, 16, 1.0, [1.0, 0.1, 0.1, 1.0], [ 0.0,  0.0,  0.0], [1.0, 1.0, 1.0], 0.0);
 	innerData[1]  = sphere(16, 16, 1.0, [0.0, 0.7, 0.2, 1.0], [ 0.8,  1.0,  2.1], [0.7, 0.3, 0.3], 1.0);
-	innerData[2]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 1.5,  0.5, -1.9], [0.8, 0.1, 0.1], 2.0);
-	innerData[3]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 2.1, -0.7, -2.5], [0.8, 0.1, 0.1], 2.0);
-	innerData[4]  = sphere(16, 16, 2.0, [0.0, 0.2, 1.0, 1.0], [ 2.7, -1.8, -2.5], [0.8, 0.1, 0.1], 2.0);
+	innerData[2]  = sphere(16, 16, 1.5, [0.0, 0.2, 1.0, 1.0], [ 1.5,  0.5, -1.9], [0.8, 0.1, 0.1], 2.0);
+	innerData[3]  = sphere(16, 16, 1.5, [0.0, 0.2, 1.0, 1.0], [ 2.1, -0.7, -2.5], [0.8, 0.1, 0.1], 2.0);
+	innerData[4]  = sphere(16, 16, 1.5, [0.0, 0.2, 1.0, 1.0], [ 2.7, -1.8, -2.5], [0.8, 0.1, 0.1], 2.0);
 	innerData[5]  = sphere(16, 16, 1.0, [0.7, 0.7, 1.0, 1.0], [-1.3, -1.0,  1.3], [0.5, 0.3, 0.3], 3.0);
 	innerData[6]  = sphere(16, 16, 2.0, [0.7, 0.0, 1.0, 1.0], [-0.8, -1.3, -1.7], [0.6, 0.3, 0.3], 4.0);
 	innerData[7]  = sphere(16, 16, 1.0, [0.0, 0.7, 1.0, 1.0], [-1.3, -2.0,  2.0], [1.0, 0.3, 0.3], 5.0);
@@ -252,7 +252,7 @@ function main(){
 	innerData[12] = sphere(16, 16, 0.5, [0.0, 0.7, 0.2, 1.0], [ 4.0,  2.3, -2.5], [1.0, 0.3, 0.3], 2.0);
 	innerData[13] = sphere(16, 16, 0.5, [0.7, 0.7, 0.2, 1.0], [ 1.7, -2.0,  1.3], [0.3, 0.3, 0.3], 3.0);
 	innerData[14] = sphere(16, 16, 2.0, [0.3, 0.3, 0.5, 1.0], [-3.0,  0.8,  0.0], [0.3, 0.3, 0.3], 4.0);
-	innerData[15] = sphere(16, 16, 0.5, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.5, 0.5, 0.5], 1.0);
+	innerData[15] = sphere(16, 16, 0.5, [0.6, 0.6, 0.8, 1.0], [ 2.3, -2.5, -1.3], [0.3, 0.3, 0.3], 1.0);
 	innerData[16] = sphere(16, 16, 1.3, [0.7, 0.1, 0.2, 1.0], [ 4.0,  0.5,  0.0], [1.0, 1.0, 1.0], 1.0);
 	innerData[17] = sphere(16, 16, 1.1, [0.7, 0.1, 0.2, 1.0], [ 9.0,  0.2,  0.0], [1.0, 1.0, 1.0], 2.0);
 	innerData[18] = sphere(16, 16, 0.9, [0.7, 0.1, 0.2, 1.0], [12.5, -0.4,  0.0], [1.0, 1.0, 1.0], 3.0);
@@ -455,7 +455,7 @@ function main(){
 		var whaleColor, innerColor;
 		var titleColor, endColor;
 		var blurColor, edgeColor, glowColor, particleColor;
-		var lines = 0.05, motion = 0, monochrome = false;
+		var lines = 0.1, motion = 0, monochrome = false;
 		var camPosition = [0.0, 0.0, 25.0];
 		var camCenter   = [0.0, 0.0, 0.0];
 		var camUp       = [0.0, 1.0, 0.0];
@@ -563,7 +563,7 @@ function main(){
 				// whale roll 2 high speed
 				motion = 1;
 				monochrome = true;
-				i = Math.min((getTimes - 68) / 4, 1.0);
+				i = Math.min((getTimes - 68) / 6, 1.0);
 				qtn.rotate(pi / 4, [0.0, 0.0, 1.0], qt1);
 				qtn.rotate(pi / 4, [0.707, 0.707, 0.0], qt2);
 				qtn.slerp(qt2, qt1, i, qtd);
@@ -579,13 +579,13 @@ function main(){
 				endColor      = [1.0, 1.0, 1.0, 0.0];
 				glowColor     = [0.0, 0.2, 0.3, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 0.5];
-				if(getTimes > 70){scene++;}
+				if(getTimes > 71){scene++;}
 				break;
 			case 7:
 				// whale roll 3
 				motion = 1;
 				monochrome = true;
-				i = Math.min((getTimes - 70) / 4, 1.0);
+				i = Math.min((getTimes - 71) / 4, 1.0);
 				qtn.rotate(-pi / 4, [0.0, 0.0, 1.0], qt1);
 				qtn.rotate(pi / 4, [0.707, 0.0, 0.707], qt2);
 				qtn.slerp(qt2, qt1, i, qtd);
@@ -652,6 +652,7 @@ function main(){
 				monochrome = true;
 				i = Math.min((getTimes - 82), 1.0);
 				j = i * 25;
+				lines *= 1.0 - i;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
 				camPosition = [0.0, 0.0, 10.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
@@ -671,9 +672,9 @@ function main(){
 				// fade in
 				motion = 2;
 				monochrome = false;
-				i = Math.min((getTimes - 83), 1.0);
+				i = Math.min((getTimes - 83) * 4.0, 1.0);
 				j = i * 25;
-				lines *= 1.0 - i;
+				lines = 0.0;
 				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
 				camPosition = [0.0, 0.0, 10.0 + easeOutCubic(i) * 10.0];
 				qtn.toVecIII(camPosition, qtd, camPosition);
@@ -685,14 +686,14 @@ function main(){
 				endColor      = [1.0, 1.0, 1.0, 0.0];
 				glowColor     = [25.2 - j, 25.5 - j, 25.7 - j, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
-				if(getTimes > 84){scene++;}
+				if(getTimes > 83.25){scene++;}
 				break;
 			case 12:
 				// color 1
 				lines = 0.0;
 				motion = 2;
 				monochrome = false;
-				i = Math.min((getTimes - 84) / 5.0, 1.0);
+				i = Math.min((getTimes - 83.25) / 5.75, 1.0);
 				qtn.rotate(pi - pi * 2, [0.577, 0.577, 0.577], qt1);
 				qtn.rotate(pi - pi * 3, [0.0, 0.707, 0.707], qt2);
 				qtn.slerp(qt1, qt2, easing(i), qtd);
@@ -831,6 +832,146 @@ function main(){
 				glowColor     = [0.2, 0.5, 0.7, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 130){scene++;}
+				break;
+			case 18:
+				// color 7 and wait
+				lines = 0.0;
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 130) / 5.0, 1.0);
+				j = i * 0.3;
+				qtn.rotate(pi / 2.5, [0.0, 1.0, 0.0], qt1);
+				qtn.rotate(pi / 2, [0.0, 1.0, 0.0], qt2);
+				qtn.slerp(qt2, qt1, i, qtd);
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 12.0 + i * 3.0;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.2 + j, 0.5 + j, 0.7 + j, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 135){scene++;}
+				break;
+			case 19:
+				// color 8 and white
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 135) / 15.0, 1.0);
+				lines *= i;
+				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt1);
+				qtn.rotate(pi / 2.5, [0.0, 1.0, 0.0], qt2);
+				qtn.slerp(qt2, qt1, i, qtd);
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 15.0;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 150){scene++;}
+				break;
+			case 20:
+				// color 9 and white
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 150) / 15.0, 1.0);
+				lines += i * 0.1;
+				qtn.rotate(pi - pi / 2, [0.0, 1.0, 0.0], qt1);
+				qtn.rotate(pi / 4, [0.0, 1.0, 0.0], qt2);
+				qtn.slerp(qt2, qt1, easing(i), qtd);
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qtd, camPosition);
+				qtn.toVecIII(camUp, qtd, camUp);
+				particleScale = 1.0;
+				particleSize = 15.0;
+				whaleColor    = [1.0, 1.0, 1.0, 1.0];
+				innerColor    = [1.0, 1.0, 1.0, 1.0];
+				blurColor     = [5.5, 5.5, 5.5, 1.0];
+				edgeColor     = [1.0, 1.0, 1.0, 1.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 165){scene++;}
+				break;
+			case 21:
+				// whale fade out
+				motion = 2;
+				monochrome = false;
+				i = Math.min((getTimes - 165) / 15.0, 1.0);
+				j = easeOutCubic(i);
+				k = 1.0 - i;
+				lines = 0.2;
+				mat.translate(jmMatrix, [j * 5.0, j * -5.0, 0.0], jmMatrix);
+				qtn.rotate(pi - pi / 2, [0.0, 1.0, 0.0], qt1);
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qt1, camPosition);
+				qtn.toVecIII(camUp, qt1, camUp);
+				particleScale = 1.0;
+				particleSize = 15.0;
+				whaleColor    = [1.0, 1.0, 1.0,  k ];
+				innerColor    = [1.0, 1.0, 1.0,  k ];
+				blurColor     = [5.5, 5.5, 5.5,  k ];
+				edgeColor     = [1.0, 1.0, 1.0,  k ];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0, 0.0];
+				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				particleColor = [0.1, 0.5, 0.7, 1.0];
+				if(getTimes > 180){scene++;}
+				break;
+			case 22:
+				// whale fade out
+				i = Math.min((getTimes - 180) / 10.0, 1.0);
+				j = 1.0 - i;
+				lines = 0.2;
+				camPosition = [0.0, 15.0, 15.0];
+				camUp = [0.0, 0.707, -0.707];
+				qtn.toVecIII(camPosition, qt1, camPosition);
+				qtn.toVecIII(camUp, qt1, camUp);
+				particleScale = 1.0;
+				particleSize = 15.0;
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0,  i ];
+				glowColor     = [0.5, 0.8, 1.0,  j ];
+				particleColor = [0.1, 0.5, 0.7,  j ];
+				if(getTimes > 190){scene++;}
+				break;
+			case 23:
+				// whale fade out
+				i = Math.min((getTimes - 190) / 10.0, 1.0);
+				j = 1.0 - i;
+				whaleColor    = [1.0, 1.0, 1.0, 0.0];
+				innerColor    = [1.0, 1.0, 1.0, 0.0];
+				blurColor     = [5.5, 5.5, 5.5, 0.0];
+				edgeColor     = [1.0, 1.0, 1.0, 0.0];
+				titleColor    = [1.0, 1.0, 1.0, 0.0];
+				endColor      = [1.0, 1.0, 1.0,  j ];
+				glowColor     = [0.5, 0.8, 1.0, 0.0];
+				particleColor = [0.1, 0.5, 0.7, 0.0];
+				if(getTimes > 200){scene++;}
+				break;
+			case 24:
+				run = false;
 				break;
 			default :
 				lines = 0.0;
