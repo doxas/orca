@@ -407,6 +407,7 @@ uniform   mat4 mMatrix;
 uniform   mat4 mvpMatrix;
 uniform   vec3 eyePosition;
 uniform   float times;
+uniform   float scales;
 varying   float vParam;
 varying   float vDistance;
 
@@ -415,11 +416,11 @@ const float far  = 50.0;
 const float coef = 1.0 / (far - near);
 
 void main(){
-	vParam = fract(params.z + times * 0.2);
+	vParam = fract(params.z + times * 0.5);
 	vec3 off = vec3(cos(times * params.x * 0.5), sin(times * params.y * 0.5), 0.0);
 	vec3 pos = (mMatrix * vec4(position + off, 1.0)).xyz;
 	vDistance = min(length(pos - eyePosition) * coef, 1.0);
-	gl_PointSize = pow(1.0 - vDistance, 10.0) * 50.0;
+	gl_PointSize = pow(1.0 - vDistance, 10.0) * 50.0 * scales;
 	gl_Position = mvpMatrix * vec4(pos, 1.0);
 }
 		</script>
