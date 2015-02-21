@@ -403,7 +403,8 @@ function main(){
 				e.className = 'none';
 
 				var cd = new canvasDrawer('texture');
-				cd.drawText('BALENA', 512, 75, 240, 20);
+				cd.drawText('BALENA', 512, 65, 240, 20);
+				cd.drawText('Tokyo Demo Fest 2015', 512, 360, 48, 20);
 				cd.drawText('doxas', 768, 680, 120, 20);
 				cd.drawText('- wgld.org -', 768, 830, 32, 20);
 				cd.drawCircle(256, 768, 120, 100);
