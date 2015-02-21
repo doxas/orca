@@ -42,7 +42,7 @@ AudioCtr.prototype.load = function(url, index, loop, background){
 		ctx.decodeAudioData(xml.response, function(buf){
 			src[index] = new AudioSrc(ctx, gain, buf, loop, background);
 			src[index].loaded = true;
-			console.log('audio loaded : index ' + index + '; ')
+			console.log('audio loaded : index ' + index + '; ');
 		}, function(e){console.log(e);});
 	};
 	xml.send();

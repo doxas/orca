@@ -464,7 +464,7 @@ function main(){
 		var onData = [];
 		var particleScale = 1.0;
 		var particleSize = 1.0;
-		for(var i = 0; i < 16; i++){onData[i] = audioCtr.src[0].onData[i];}
+		for(i = 0; i < 16; i++){onData[i] = audioCtr.src[0].onData[i];}
 		mat.identity(jmMatrix);
 		qt1 = qtn.identity(qtn.create());
 		qt2 = qtn.identity(qtn.create());
