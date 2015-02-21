@@ -97,7 +97,7 @@ Char.prototype.init = function(){
 	this.vpos.y = 0.0;
 	this.vpos.z = 0.0;
 	this.alive = true;
-}
+};
 
 Char.prototype.update = function(){
 	this.vpos.x *= 0.975;
@@ -129,5 +129,5 @@ canvasDrawer.prototype.drawCircle = function(x, y, r, blur){
 	this.ctx.shadowBlur = blur;
 	this.ctx.arc(x, y, r, 0, Math.PI * 2, false);
 	this.ctx.fill();
-}
+};
 
