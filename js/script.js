@@ -50,7 +50,7 @@ window.onload = function(){
 
 	window.addEventListener('keydown', keyDown, true);
 
-	audioCtr.load('snd/bgm3.mp3', 0, false, true);
+	audioCtr.load('snd/bgm.mp3', 0, false, true);
 
 	var e = document.getElementById('navi');
 	e.style.lineHeight = window.innerHeight + 'px';
