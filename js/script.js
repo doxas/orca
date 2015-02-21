@@ -29,7 +29,7 @@ var jsonLoaded = false;
 // events
 
 // audio
-var audioCtr = new AudioCtr(0.75, 0.75);
+var audioCtr = new AudioCtr(0.9, 0.9);
 
 window.onload = function(){
 	var i = 0;
@@ -56,31 +56,6 @@ window.onload = function(){
 	e.style.lineHeight = window.innerHeight + 'px';
 	e.innerText = 'loading...';
 
-	var cd = new canvasDrawer('texture');
-	cd.drawText('BALENA', 512, 75, 240, 20);
-	cd.drawText('doxas', 768, 680, 120, 20);
-	cd.drawText('- wgld.org -', 768, 830, 32, 20);
-	cd.drawCircle(256, 768, 120, 100);
-	cd.drawCircle(256, 768, 120, 100);
-	cd.drawCircle(256, 768, 120,  90);
-	cd.drawCircle(256, 768, 120,  90);
-	cd.drawCircle(256, 768, 120,  80);
-	cd.drawCircle(256, 768, 120,  80);
-	cd.drawCircle(256, 768, 120,  70);
-	cd.drawCircle(256, 768, 120,  70);
-	cd.drawCircle(256, 768, 120,  60);
-	cd.drawCircle(256, 768, 120,  60);
-	cd.drawCircle(256, 768, 120,  50);
-	cd.drawCircle(256, 768, 120,  50);
-	cd.drawCircle(256, 768, 120,  40);
-	cd.drawCircle(256, 768, 120,  40);
-	cd.drawCircle(256, 768, 120,  30);
-	cd.drawCircle(256, 768, 120,  30);
-	cd.drawCircle(256, 768, 120,  20);
-	cd.drawCircle(256, 768, 120,  20);
-	cd.drawCircle(256, 768, 120,  10);
-	cd.drawCircle(256, 768, 120,  10);
-
 	main();
 };
 
@@ -91,6 +66,9 @@ function main(){
 	var ease20 = [];
 	var ease30 = [];
 
+	var e = document.getElementById('navi');
+	e.style.lineHeight = window.innerHeight + 'px';
+	
 	// line base shader program -----------------------------------------------
 	var basePrg = w.generate_program(
 		'baseVS',
@@ -275,7 +253,6 @@ function main(){
 	var innerIndexLength = innerData[0].index.length;
 
 	// box lines
-	// var boxData = box(2.0);
 	var boxData = ball(3, 3, 2.0);
 	var boxPosition    = w.create_vbo(boxData.position);
 	var boxVBOList     = [boxPosition];
@@ -330,9 +307,6 @@ function main(){
 	mat.ortho(-1.0, 1.0, 1.0, -1.0, 0.1, 1.0, pMatrix);
 	mat.multiply(pMatrix, vMatrix, ortMatrix);
 
-	// texture initialize phase -----------------------------------------------
-	w.create_texture_canvas(document.getElementById('texture'), 0);
-
 	// frame buffer  initialize phase -----------------------------------------
 	noiseBuffer     = w.create_framebuffer(bufferSize, bufferSize);
 	offScreenBuffer = w.create_framebuffer(offScreenSize, offScreenSize);
@@ -373,7 +347,7 @@ function main(){
 	var weight = new Array(10);
 	var t = 0.0;
 	var d = 100.0;
-	for(var i = 0; i < weight.length; i++){
+	for(i = 0; i < weight.length; i++){
 		var r = 1.0 + 2.0 * i;
 		var v = Math.exp(-0.5 * (r * r) / d);
 		weight[i] = v;
@@ -396,17 +370,7 @@ function main(){
 	
 	// loading wait -----------------------------------------------------------
 	(function(){
-		if(audioCtr.loadComplete() && w.texture[0] != null && jsonLoaded){
-			// dom update and background music play
-			var e = document.getElementById('navi');
-			e.innerText = 'done';
-			e.className = 'hide';
-			setTimeout(function(){
-				e.className = 'none';
-				audioCtr.src[0].play();
-				render();
-			}, 5000);
-
+		if(audioCtr.loadComplete() && jsonLoaded){
 			// jsondata initialize phase --------------------------------------
 			jsonData.color = [];
 			jsonData.type = [];
@@ -423,14 +387,52 @@ function main(){
 			jsonIndex    = w.create_ibo(jsonData.index);
 			jsonIndexLength = jsonData.index.length;
 
-			// variable initialize
-			startTimes = Date.now();
-			scene = 0;
-
 			// texture binding
 			w.gl.activeTexture(w.gl.TEXTURE1);
 			w.gl.bindTexture(w.gl.TEXTURE_2D, noiseBuffer.t);
 			w.gl.activeTexture(w.gl.TEXTURE0);
+
+			// dom update and background music play
+			var e = document.getElementById('navi');
+			e.innerText = 'done';
+			e.className = 'hide';
+			setTimeout(function(){
+				// variable initialize
+				startTimes = Date.now();
+				scene = 0;
+				e.className = 'none';
+
+				var cd = new canvasDrawer('texture');
+				cd.drawText('BALENA', 512, 75, 240, 20);
+				cd.drawText('doxas', 768, 680, 120, 20);
+				cd.drawText('- wgld.org -', 768, 830, 32, 20);
+				cd.drawCircle(256, 768, 120, 100);
+				cd.drawCircle(256, 768, 120, 100);
+				cd.drawCircle(256, 768, 120,  90);
+				cd.drawCircle(256, 768, 120,  90);
+				cd.drawCircle(256, 768, 120,  80);
+				cd.drawCircle(256, 768, 120,  80);
+				cd.drawCircle(256, 768, 120,  70);
+				cd.drawCircle(256, 768, 120,  70);
+				cd.drawCircle(256, 768, 120,  60);
+				cd.drawCircle(256, 768, 120,  60);
+				cd.drawCircle(256, 768, 120,  50);
+				cd.drawCircle(256, 768, 120,  50);
+				cd.drawCircle(256, 768, 120,  40);
+				cd.drawCircle(256, 768, 120,  40);
+				cd.drawCircle(256, 768, 120,  30);
+				cd.drawCircle(256, 768, 120,  30);
+				cd.drawCircle(256, 768, 120,  20);
+				cd.drawCircle(256, 768, 120,  20);
+				cd.drawCircle(256, 768, 120,  10);
+				cd.drawCircle(256, 768, 120,  10);
+
+				// texture initialize phase -----------------------------------------------
+				w.create_texture_canvas(document.getElementById('texture'), 0);
+
+				audioCtr.src[0].play();
+				render();
+			}, 5000);
 		}else{
 			setTimeout(arguments.callee, 100);
 		}
@@ -854,7 +856,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 1.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [0.2 + j, 0.5 + j, 0.7 + j, 1.0];
+				glowColor     = [0.2 + j / 2, 0.5 + j / 2, 0.7 + j, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 135){scene++;}
 				break;
@@ -879,7 +881,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 1.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				glowColor     = [0.35, 0.65, 1.0, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 150){scene++;}
 				break;
@@ -904,7 +906,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 1.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				glowColor     = [0.35, 0.65, 1.0, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 165){scene++;}
 				break;
@@ -914,7 +916,7 @@ function main(){
 				monochrome = false;
 				i = Math.min((getTimes - 165) / 15.0, 1.0);
 				j = easing(1.0 - i);
-				k = Math.pow(1.0 - i, 3.0);
+				k = Math.pow(1.0 - i, 5.0);
 				lines = 0.2;
 				mat.scale(jmMatrix, [j, j, j], jmMatrix);
 				qtn.rotate(pi - pi / 2, [0.0, 1.0, 0.0], qt1);
@@ -930,7 +932,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0,  k ];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0, 0.0];
-				glowColor     = [0.5, 0.8, 1.0, 1.0];
+				glowColor     = [0.35, 0.65, 1.0, 1.0];
 				particleColor = [0.1, 0.5, 0.7, 1.0];
 				if(getTimes > 180){scene++;}
 				break;
@@ -952,12 +954,12 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 0.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0,  i ];
-				glowColor     = [0.5, 0.8, 1.0,  j ];
+				glowColor     = [0.35, 0.65, 1.0,  j ];
 				particleColor = [0.1, 0.5, 0.7,  j ];
 				if(getTimes > 190){scene++;}
 				break;
 			case 23:
-				// whale fade out
+				// end roll
 				i = Math.min((getTimes - 190) / 10.0, 1.0);
 				j = 1.0 - i;
 				whaleColor    = [1.0, 1.0, 1.0, 0.0];
@@ -966,7 +968,7 @@ function main(){
 				edgeColor     = [1.0, 1.0, 1.0, 0.0];
 				titleColor    = [1.0, 1.0, 1.0, 0.0];
 				endColor      = [1.0, 1.0, 1.0,  j ];
-				glowColor     = [0.5, 0.8, 1.0, 0.0];
+				glowColor     = [0.35, 0.65, 1.0, 0.0];
 				particleColor = [0.1, 0.5, 0.7, 0.0];
 				if(getTimes > 200){scene++;}
 				break;

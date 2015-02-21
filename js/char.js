@@ -121,7 +121,7 @@ function canvasDrawer(id){
 
 canvasDrawer.prototype.drawText = function(text, x, y, size, blur){
 	this.ctx.shadowBlur = blur;
-	this.ctx.font = 'bold ' + size + 'px consolas, Monaco, monospace';
+	this.ctx.font = size + "px 'Cinzel Decorative', consolas, Monaco, monospace";
 	this.ctx.fillText(text, x, y, 1024);
 };
 
