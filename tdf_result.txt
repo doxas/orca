@@ -1,0 +1,94 @@
+           .---------------------------------------------------.
+           |                                      _______      |
+    OFFICIAL RESULTS      _______                /      /      |
+             _________   /      /       _______ /      /       |
+     _____  /         \ /     _/_______/      //      /        :
+ ___/   _/_/    /\     \      \/      /     _//      /____________
+ \__    __/    / /     /           __/      \/      /     __      \
+ _/     /___.  \/     /    ___     \ \       \     /     / /      / /\
+ \     /    |        /     \/       \ \        ___/      \/      / /__\
+  \_________| ______/      /________/_/        \ __\____________/________
+    ____  _______/ /_________\  __   /_________/  / /     \              \
+    \  / /    __           \    \________/        \/       \     /\       \
+     \/ /     \ \          /    ___/___ /     ___  ___     /    / /       /
+       /       \ \        /      \/    \      \/   \/     /    / /       /
+      /         \_)      /       /      \     /    /     /_____\/_      /
+      \_________________/\______________/____/-----\____//       /_____/
+        ______  /               /_       /              /       /   __
+        \    / /     __________/ \______/    __________/      _/_   \/
+         \  / /      ______/   ____/__ _\________    \__     ___/______
+          \/ /        / /       \/    \        \/     /      \/       /
+            /        / /        /      \             /               /
+           _)       /  \_______________/\___________/\______________/
+          /        /                                           !NE7
+         /________/      TOKYO DEMO FEST 2015                  :
+           .                   FEBRUARY 21st-22nd, IIDABASHI   !
+    .------`---------------------------------------------------'------.
+   /  .o( Combined Demo Compo )o.                            : points  \
+   '-------------------------------------------------------------------'
+    :  1. : Optical circuit by 0x4015 ......................... 222 . :
+    :  2. : blue impulse by i-saint/primitive ................. 190 . :
+    :  3. : LUNA by MetroGirl ................................. 173 . :
+    :  4. : mndrn by Mandarine [REMOTE] ....................... 160 . :
+    :  5. : 転職騎士ガングリオン by tomohiro .................. 155 . :
+    :  6. : BALENA by doxas/ .................................. 153 . :
+    :  7. : PB:BitTrip by Poobrain ............................ 135 . :
+    :  8. : Travel to Japan by tmp + xmen ..................... 134 . :
+    :  9. : gen_field by hamuha/ .............................. 129 . :
+    : 10. : got life by the metaballs by rqdq & futuris ....... 122 . :
+    : 11. : Varifran 1 1 by Yzi/Fit^L!T^Saunagroup [REMOTE] ... 119 . :
+    : 12. : pb00:MaruMaru by Poo-Brain ........................ 115 . :
+    .-----'-----------------------------------------------------------.
+   /  .o( GLSL Graphics Compo )o.                            : points  \
+   '-------------------------------------------------------------------'
+    :  1. : Shell by FMS_Cat .................................. 228 . :
+    :  2. : Limbo by Daeken | Straylight^Primitive [REMOTE] ... 213 . :
+    :  3. : Wireframe 3D Shooting demo by                             :
+    :     :     Yasuo Hasegawa [REMOTE] ....................... 206 . :
+    :  4. : Shmup Shader by Katsuomi Kobayashi ................ 201 . :
+    :  5. : This Is My Own Sushi !! by FMS_Cat ................ 186 . :
+    :  6. : Wave? by maah_booh/ ............................... 171 . :
+    :  7. : enter the world of magnetic fluid by hamuha/ ...... 157 . :
+    :  8. : inaho by jirohcl .................................. 152 . :
+    :  9. : yuuhi by gyabo/OCHA ............................... 143 . :
+    : 10. : Mandelbrot by peryaudo ............................ 135 . :
+    : 11. : moving_gummy_2015 by natade ....................... 134 . :
+    : 12. : All your FX are belong to us. by Pentan/ .......... 126 . :
+    : 13. : Azure Abyss (碧き奈落) by ぱんぷきんへっど ........ 116 . :
+    .-----'-----------------------------------------------------------.
+   /  .o( Combined Music Compo )o.                           : points  \
+   '-------------------------------------------------------------------'
+    :  1. : Outer Space by Jugem-T/ (Atmosphere/DSdA) ......... 177 . :
+    :  2. : You and Me by T_S/RTX1911 ......................... 176 . :
+    :  3. : 飛機,我的朋友 (airplane, my friend) by                    :
+    :     :     med/Mandarine [REMOTE] ........................ 175 . :
+    :  4. : Done For Me Lately by Wilsynth .................... 174 . :
+    :  5. : "VOX" da Harsh HarmoniX by                                :
+    :     :     Klavistr (Atmosphere/KLV Canvas) .............. 165 . :
+    :  6. : Tech Ver.20150221 by machia/machiaworks ........... 158 . :
+    :  7. : la mission deltaplane by franz_koopa [REMOTE] ..... 147 . :
+    :  8. : Voltage Of Power (backing track) by                       :
+    :     :     EagleEye/RTX1911 .............................. 139 . :
+    :  8. : The Long Agony Suite by                                   :
+    :     :     Judge Brad/Black RainboW [REMOTE] ............. 139 . :
+    : 10. : I Can't Forget, Only Erase by                             :
+    :     :     Judge Brad/Blackn RainboW [REMOTE] ............ 132 . :
+    : 11. : Warm february by Madmack'Dreamweb [REMOTE] ........ 130 . :
+    .-----'-----------------------------------------------------------.
+   /  .o( Combined Graphics Compo )o.                        : points  \
+   '-------------------------------------------------------------------'
+    :  1. : 2-A by fsqrt [REMOTE] ............................. 196 . :
+    :  2. : This is not a drill by                                    :
+    :     :     Anathematixs / DESiRE [REMOTE] ................ 191 . :
+    :  3. : Zapata's Dream by bo01ean/None .................... 181 . :
+    :  4. : PixelLoli by versity2003/rqdq/Sydney .............. 160 . :
+    :  5. : Japan by Anya/Xmen ................................ 159 . :
+    :  6. : Mandala Flower by Chocoreta/None .................. 150 . :
+    :  7. : tribute to ra by                                          :
+    :     :     yogib33r/Vital-Motion!^X-Men^NoExtra [REMOTE] . 147 . :
+    :  8. : RoboMaid by versity2003/rqdq/Sydney ............... 139 . :
+    .-----'-----------------------------------------------------------.
+   /  .o( Wild Compo )o.                                     : points  \
+   '-------------------------------------------------------------------'
+    :  1. : TDFdroid by @y_k_one/ysakaguchi ................... 212 . :
+    `-----'-----------------------------------------------------------'
